@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-upload-form',
-  imports: [CommonModule],
+  standalone: true,
+  imports: [CommonModule, HttpClientModule],
   templateUrl: './upload-form.component.html',
   styleUrl: './upload-form.component.css'
 })
@@ -14,8 +16,9 @@ export class UploadFormComponent {
   fileName = '';
   fileSize = '';
   uploadStatus: number | undefined;
+  private apiUrl = 'http://localhost:8000/upload/'
 
-  constructor() {}
+  constructor(private http: HttpClient) {}
 
   onFileSelected(event: any, inputFile: File | null) {
     this.outputBoxVisible = false;
@@ -34,23 +37,21 @@ export class UploadFormComponent {
       const formData = new FormData();
       formData.append('file', file);
 
-      const xhr = new XMLHttpRequest();
-      xhr.open('POST', 'http://localhost:4000/upload', true);
-
-      xhr.onreadystatechange = () => {
-        if (xhr.readyState === XMLHttpRequest.DONE) {
-          if (xhr.status === 200) {
-            this.uploadResult = 'Uploaded';
-          } else if (xhr.status === 400) {
-            this.uploadResult = JSON.parse(xhr.response)!.message;
-          } else {
+      this.http.post(this.apiUrl, formData)
+      .subscribe({
+        next: (response: any) => {
+          this.uploadResult = 'Uploaded';
+          this.uploadStatus = 200;
+        },
+        error: (error: any) => {
+          if (error.status === 400) {
+            this.uploadResult = error.error.message;
+          } else{
             this.uploadResult = 'File upload failed!';
           }
-          this.uploadStatus = xhr.status;
+          this.uploadStatus = error.status;
         }
-      };
-
-      xhr.send(formData);
+      });
     }
   }
 
