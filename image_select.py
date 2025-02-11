@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 
 
 
-image_path ='images_test/BB_Example_2.jpeg'
+image_path ='images_test/BB_Example_1.jpeg'
 
 def image_to_grid(image_path, grid_size=(8,8)):
 
@@ -72,6 +72,6 @@ def detect_bottom_shapes(image_path, grid_width=8, grid_height=8):
 
 shapes =detect_bottom_shapes(image_path)
 # image_to_binary_grid(shapes[2])
-shapes[0].show()
-shapes[2].save('images_test/BB_Example_2_shape2.jpeg')
+# shapes[0].show()
+shapes[0].save('shape_test/BB_Example_1_shape0.jpeg')
 
