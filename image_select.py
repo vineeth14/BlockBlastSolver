@@ -73,76 +73,52 @@ def detect_bottom_shapes(image_path, grid_width=8, grid_height=8):
 
     return cropped_images
 
-def find_x0(image, background_px, tolerance):
-    """Finds the starting x0 position dynamically based on the first non-background pixel."""
+def read_grid(image):
+    # Convert the supplied image to a PIL Image if it's not already one
+    if not isinstance(image, Image.Image):
+        image = Image.fromarray(image)
+
+    # Define the region boundaries
+    x_min = 1025
+    y_min = 1240
+    x_max = 1710
+    y_max = 1468
+
+    # Load pixel data from the image
     px = image.load()
-    width, height = image.size
-    
-    for x in range(width):
-        first_pixel = px[x, height // 2]  # Check a row in the middle
-        if not check_color(first_pixel, background_px, tolerance):
-            return x  # The first non-background pixel
-    return 10  # Default fallback value
+    img_width, img_height = image.size
+    # Define the width and height of the region based on the boundaries
+    region_width = x_max - x_min
+    region_height = y_max - y_min  
 
-def shape_to_grid(image):
-    # image = Image.open(image) 
-    image = image.resize((685,228))
-    offset = 41 #size of block 
-    px = image.load()
-    tolerance = 0.05
-    background_px = [51,76,132]
-    x0 = 10
-    width, height = image.size 
-    rows= (height)//offset
-    columns = (width-x0)//offset
-    grid = np.zeros((rows+2, columns+2))
+    spacing = 41  # Spacing between grid points (adjust based on your image)
+    x_offset = 10  # Starting horizontal offset
 
+    ref_background = (48, 74, 139)  # Reference background color
 
-    for x in range(columns):
-
-        block_found = False
-        for y in range(0,rows):
-
-            pixel_coord = (x*offset+x0,y*offset)
-            current_pixel = px[pixel_coord]
-            is_bg_color = check_color(current_pixel,background_px, tolerance)
-            if not block_found and not is_bg_color:
-                #on first block
-                grid[y,x] = 1
-                block_found=True
-            elif block_found and not is_bg_color:
-                grid[y,x] = 1
-            elif block_found and is_bg_color:
-                break
-    
-    return grid
-
-
-def shape_to_grid_2(image):
-    offset = 41  # distance between two blocks
-    x0 = 10  # can be adapted to the screen dimensions
+    # Initialize the grid with zeros (with a small extra buffer)
+    grid = np.zeros((region_height // spacing + 2, region_width // spacing + 2))
     x = -1
-    background_ref = (48, 74, 139)
-    grid = np.zeros(((y_max - y_min) // offset + 2, (x_max - x_min) // offset + 2))  # the 2 may be changed for fine-tuning of pixels
-    while (x + 1) * offset + x0 < (x_max - x_min) - 1:
+    while (x + 1) * spacing + x_offset < region_width - 1:
+        print('x', x)
         x += 1
         y = 0
-        background = True
-        while (y + 1) * offset < (y_max - y_min) - 1:
-            # print(y, y * offset + y_min)
+        in_background = True
+        while (y + 1) * spacing < region_height - 1:
+            print(y, y * spacing, region_height)
             y += 1
-            check_color = check_color(px[x * offset + x0, y * offset], background_ref, 0.1)
-            if background and not check_color:  # on the background but not the background color = not on the background
-                background = False
+            color_match = check_color(px[x * spacing + x_offset, y * spacing], ref_background, 0.1)
+            if in_background and not color_match:
+                in_background = False
                 grid[y, x] = 1
-            elif not check_color:  # not on the background and not the background color = still not on the background
+            elif not color_match:
                 grid[y, x] = 1
-            elif not background:  # not on the background but background color = back on the background
+            elif not in_background:
                 break
+
     return grid
 
-
-image_path ='images_test/BB_Example_1.png'
+image_path ='images_test/Exemple_1.png'
 
 
 shapes =detect_bottom_shapes(image_path)
@@ -152,14 +128,20 @@ shapes =detect_bottom_shapes(image_path)
 #     print(grid)
 
 image = Image.open(image_path)
-
-crop_grid = (0, 1400, 900, 1800)
+x_min=1025
+y_min=1240
+x_max=1710
+y_max=1468
+crop_grid = (x_min, y_min, x_max, y_max)
 grid_image = image.crop(crop_grid)
-# grid_image.show()
-grid =shape_to_grid(grid_image)
 
-print(grid)
+# grid =shape_to_grid(grid_image)
+
+# print(grid)
 # image_to_binary_grid(shapes[2])
 # shapes[0].show()
 # shapes[0].save('shape_test/BB_Example_1_shape0.jpeg')
+
+grid = read_grid(grid_image)
+print(grid)
 
