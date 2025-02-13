@@ -3,31 +3,21 @@ import os
 import numpy as np
 from PIL import Image
 import matplotlib.pyplot as plt
+import image_select
 
-image_paths = ['BB_Example_1_shape0.jpeg', 'BB_Example_2_shape0.jpeg', 'BB_Example_6_shape0.jpeg', 'BB_Example_7_shape1.jpeg', 'BB_Example_6_shape1.jpeg', 'BB_Example_7_shape2.jpeg',
-'BB_Example_1_shape1.jpeg', 'BB_Example_2_shape1.jpeg', 'BB_Example_6_shape2.jpeg', 'BB_Example_1_shape2.jpeg', 'BB_Example_2_shape2.jpeg', 'BB_Example_7_shape0.jpeg']
-
-def remove_background(image_paths):
+def remove_background(shapes):
     # Define the background RGB color (given by user)
     bg_color = np.array([51, 76, 132])  # Adjusted for the provided background color
 
     # Tolerance for color detection
     tolerance = 30
-    lower_bound = np.clip(bg_color - tolerance, 0, 255)
+    lower_bound = np.clip(bg_color - tolerance, 0, 255) #np clip ensures that the values are within the valid range
     upper_bound = np.clip(bg_color + tolerance, 0, 255)
 
     processed_images = []
-
-    # Use the script's directory to form an absolute path, ensuring we write in the correct location.
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    output_folder = os.path.join(script_dir, 'shape_extracted')
-    if not os.path.exists(output_folder):
-        os.makedirs(output_folder)
-
-    for img_path in image_paths:
+    for shape in shapes:
         # Load the image and check if it was successfully loaded
-        image = cv2.imread(img_path)
-        image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        image_rgb = cv2.cvtColor(shape, cv2.COLOR_BGR2RGB)
 
         # Create a mask where the background is detected
         mask = cv2.inRange(image_rgb, lower_bound, upper_bound)
@@ -37,24 +27,41 @@ def remove_background(image_paths):
         image_rgba = cv2.cvtColor(image_rgb, cv2.COLOR_RGB2RGBA)
         image_rgba[:, :, 3] = mask_inv  # Assign the inverted mask to the alpha channel
 
-        # Save the output image in the shape_extracted folder
-        base_name = os.path.basename(img_path)
-        output_file = os.path.join(output_folder, base_name.replace('.jpeg', '_no_bg.png'))
-        success = cv2.imwrite(output_file, image_rgba)
-        if not success:
-            print(f'Error: Could not write file {output_file}')
-        else:
-            # Load for displaying
-            processed_images.append(Image.open(output_file))
+        processed_images.append(image_rgba)
 
-    # Display the processed images
-    fig, axes = plt.subplots(2, 5, figsize=(15, 6))
+    return processed_images
+        
 
-    for ax, img, name in zip(axes.ravel(), processed_images, image_paths):
-        ax.imshow(img)
-        ax.axis('off')
-        ax.set_title(os.path.basename(name))
+def extract_shape(image_rgba):
+    """Extracts the shape from an image after background removal."""
 
-    plt.show()
+    
+    # Convert RGBA to grayscale using the alpha channel
+    alpha_channel = image_rgba[:, :, 3]
 
-remove_background(image_paths)
+    # Create a binary mask
+    _, binary_mask = cv2.threshold(alpha_channel, 1, 255, cv2.THRESH_BINARY)
+
+    # Find contours
+    contours, _ = cv2.findContours(binary_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    # Create a blank mask with the same shape
+    mask = np.zeros_like(alpha_channel)
+
+    # Draw the largest contour on the mask
+    cv2.drawContours(mask, contours, -1, (255), thickness=cv2.FILLED)
+
+    # Apply mask to extract the shape
+    extracted_shape = cv2.bitwise_and(image_rgba, image_rgba, mask=mask)
+
+    return extracted_shape
+
+
+
+
+image_path = 'images_test/BB_Example_1.png'
+shapes =image_select.detect_bottom_shapes(image_path)
+
+processed_images = remove_background(shapes)
+e = extract_shape(processed_images[0])
+Image.fromarray(e).show()
