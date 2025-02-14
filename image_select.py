@@ -79,10 +79,10 @@ def read_grid(image):
         image = Image.fromarray(image)
 
     # Define the region boundaries
-    x_min = 1025
-    y_min = 1240
-    x_max = 1710
-    y_max = 1468
+    x_min = 0
+    y_min = 1400
+    x_max = 900
+    y_max = 1800
 
     # Load pixel data from the image
     px = image.load()
@@ -91,23 +91,23 @@ def read_grid(image):
     region_width = x_max - x_min
     region_height = y_max - y_min  
 
-    spacing = 41  # Spacing between grid points (adjust based on your image)
+    block_size = 46  # Spacing between grid points (adjust based on your image)
     x_offset = 10  # Starting horizontal offset
 
     ref_background = (48, 74, 139)  # Reference background color
 
     # Initialize the grid with zeros (with a small extra buffer)
-    grid = np.zeros((region_height // spacing + 2, region_width // spacing + 2))
+    grid = np.zeros((region_height // block_size + 2, region_width // block_size + 2))
     x = -1
-    while (x + 1) * spacing + x_offset < region_width - 1:
+    while (x + 1) * block_size + x_offset < region_width - 1:
         print('x', x)
         x += 1
         y = 0
         in_background = True
-        while (y + 1) * spacing < region_height - 1:
-            print(y, y * spacing, region_height)
+        while (y + 1) * block_size < region_height - 1:
+            print(y, y * block_size, region_height)
             y += 1
-            color_match = check_color(px[x * spacing + x_offset, y * spacing], ref_background, 0.1)
+            color_match = check_color(px[x * block_size + x_offset, y * block_size], ref_background, 0.1)
             if in_background and not color_match:
                 in_background = False
                 grid[y, x] = 1
@@ -118,7 +118,7 @@ def read_grid(image):
 
     return grid
 
-image_path ='images_test/Exemple_1.png'
+image_path ='images_test/BB_Example_4.png'
 
 
 shapes =detect_bottom_shapes(image_path)
@@ -128,10 +128,10 @@ shapes =detect_bottom_shapes(image_path)
 #     print(grid)
 
 image = Image.open(image_path)
-x_min=1025
-y_min=1240
-x_max=1710
-y_max=1468
+x_min=0
+y_min=1400
+x_max=900
+y_max=1800
 crop_grid = (x_min, y_min, x_max, y_max)
 grid_image = image.crop(crop_grid)
 
