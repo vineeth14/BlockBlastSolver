@@ -79,10 +79,10 @@ def read_grid(image):
         image = Image.fromarray(image)
 
     # Define the region boundaries
-    x_min = 1025
-    y_min = 1240
-    x_max = 1710
-    y_max = 1468
+    x_min = 0
+    y_min = 1700
+    x_max = 1170
+    y_max = 2200
 
     # Load pixel data from the image
     px = image.load()
@@ -91,8 +91,8 @@ def read_grid(image):
     region_width = x_max - x_min
     region_height = y_max - y_min  
 
-    spacing = 41  # Spacing between grid points (adjust based on your image)
-    x_offset = 10  # Starting horizontal offset
+    spacing = 58 # Spacing between grid points (adjust based on your image)
+    x_offset = 20  # Starting horizontal offset
 
     ref_background = (48, 74, 139)  # Reference background color
 
@@ -107,7 +107,7 @@ def read_grid(image):
         while (y + 1) * spacing < region_height - 1:
             print(y, y * spacing, region_height)
             y += 1
-            color_match = check_color(px[x * spacing + x_offset, y * spacing], ref_background, 0.1)
+            color_match = check_color(px[x * spacing + x_offset, y * spacing], ref_background, 0.05)
             if in_background and not color_match:
                 in_background = False
                 grid[y, x] = 1
@@ -118,7 +118,7 @@ def read_grid(image):
 
     return grid
 
-image_path ='images_test/Exemple_1.png'
+image_path ='images_test/uncompressed_ss1.PNG'
 
 
 shapes =detect_bottom_shapes(image_path)
@@ -128,10 +128,11 @@ shapes =detect_bottom_shapes(image_path)
 #     print(grid)
 
 image = Image.open(image_path)
-x_min=1025
-y_min=1240
-x_max=1710
-y_max=1468
+print(image.size)
+x_min=0
+y_min=1700
+x_max=1170
+y_max=2200
 crop_grid = (x_min, y_min, x_max, y_max)
 grid_image = image.crop(crop_grid)
 
@@ -141,7 +142,7 @@ grid_image = image.crop(crop_grid)
 # image_to_binary_grid(shapes[2])
 # shapes[0].show()
 # shapes[0].save('shape_test/BB_Example_1_shape0.jpeg')
-
+grid_image.show()
 grid = read_grid(grid_image)
 print(grid)
 
