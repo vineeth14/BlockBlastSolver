@@ -91,7 +91,7 @@ def read_grid(image):
     region_width = x_max - x_min
     region_height = y_max - y_min  
 
-    spacing = 58 # Spacing between grid points (adjust based on your image)
+    spacing = 57 # Spacing between grid points (adjust based on your image)
     x_offset = 20  # Starting horizontal offset
 
     ref_background = (48, 74, 139)  # Reference background color
@@ -118,7 +118,7 @@ def read_grid(image):
 
     return grid
 
-image_path ='images_test/uncompressed_ss1.PNG'
+image_path ='uncompressed_images/IMG_0433.PNG'
 
 
 shapes =detect_bottom_shapes(image_path)
