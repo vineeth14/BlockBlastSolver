@@ -10,24 +10,17 @@ import matplotlib.pyplot as plt
 
 
 
-image_path ='images_test/BB_Example_5.png'
+image_path ='uncompressed_images/IMG_0437.PNG'
 
-
-def check_color(measured, reference, allowed_deviation):
-    correct = True
-    for i in range(3): 
-        if abs(measured[i] - reference[i]) > allowed_deviation * 255:
-            correct = False
-    return correct
 
 def image_to_grid(image_path, grid_size=(8,8)):
 
     image = Image.open(image_path) 
 
     grayscale_image = image.convert('L')
-    crop_grid = (50, 500, 900, 1300)
+    crop_grid = (50, 600, 1120, 1650)
     grid_image = grayscale_image.crop(crop_grid)
- 
+    grid_image.show()
     # grayscale_image.show()
     # Step 3: Apply thresholding to convert the image to binary
     threshold = 85 
@@ -44,7 +37,7 @@ def image_to_grid(image_path, grid_size=(8,8)):
     print(grid)
     return grid
 
-
+image_to_grid(image_path)
 
 
 def detect_bottom_shapes(image_path, grid_width=8, grid_height=8):
@@ -73,7 +66,15 @@ def detect_bottom_shapes(image_path, grid_width=8, grid_height=8):
 
     return cropped_images
 
-def read_grid(image):
+
+def check_color(measured, reference, allowed_deviation):
+    correct = True
+    for i in range(3): 
+        if abs(measured[i] - reference[i]) > allowed_deviation * 255:
+            correct = False
+    return correct
+
+def read_shapes_to_grid(image):
     # Convert the supplied image to a PIL Image if it's not already one
     if not isinstance(image, Image.Image):
         image = Image.fromarray(image)
@@ -167,22 +168,22 @@ shapes =detect_bottom_shapes(image_path)
 #     grid = shape_to_grid(shape)
 #     print(grid)
 
-image = Image.open(image_path)
-print(image.size)
-x_min=100
-y_min=1700
-x_max=1070
-y_max=2200
-crop_grid = (x_min, y_min, x_max, y_max)
-grid_image = image.crop(crop_grid)
+# image = Image.open(image_path)
+# print(image.size)
+# x_min=100
+# y_min=1700
+# x_max=1070
+# y_max=2200
+# crop_grid = (x_min, y_min, x_max, y_max)
+# grid_image = image.crop(crop_grid)
 
-# grid =shape_to_grid(grid_image)
+# # grid =shape_to_grid(grid_image)
 
+# # print(grid)
+# # image_to_binary_grid(shapes[2])
+# # shapes[0].show()
+# # shapes[0].save('shape_test/BB_Example_1_shape0.jpeg')
+# grid_image.show()
+# grid = read_grid(grid_image)
 # print(grid)
-# image_to_binary_grid(shapes[2])
-# shapes[0].show()
-# shapes[0].save('shape_test/BB_Example_1_shape0.jpeg')
-grid_image.show()
-grid = read_grid(grid_image)
-print(grid)
 
