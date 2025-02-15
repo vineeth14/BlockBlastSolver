@@ -17,19 +17,19 @@ def image_to_grid(image_path, grid_size=(8,8)):
 
     image = Image.open(image_path) 
 
-    grayscale_image = image.convert('L')
-    crop_grid = (50, 600, 1120, 1650)
-    grid_image = grayscale_image.crop(crop_grid)
+    grayscaleImage = image.convert('L')
+    cropGrid = (50, 600, 1120, 1650)
+    gridImage = grayscaleImage.crop(cropGrid)
    
     # Step 3: Apply thresholding to convert the image to binary
     threshold = 85 
-    binary_image = grid_image.point(lambda p: 255 if p > threshold else 0)
+    binaryImage = gridImage.point(lambda p: 255 if p > threshold else 0)
 
     # Step 4: Resize the image to the grid size
-    resized_image = binary_image.resize(grid_size, Image.NEAREST)
+    resizedImage = binaryImage.resize(grid_size, Image.NEAREST)
 
     # Step 5: Convert the image to a NumPy array
-    grid = np.array(resized_image)
+    grid = np.array(resizedImage)
 
     # Convert to 0s and 1s
     grid = np.where(grid == 255, 1, 0)
@@ -58,23 +58,23 @@ def read_shapes_to_grid(image):
     y_min = 1700
     x_max = 1070
     y_max = 2200
-    crop_grid = (x_min, y_min, x_max, y_max)
-    grid_image = image.crop(crop_grid)
+    cropGrid = (x_min, y_min, x_max, y_max)
+    gridImage = image.crop(cropGrid)
 
     # Load pixel data from the image
-    px = grid_image.load()
-    img_width, img_height = grid_image.size
+    px = gridImage.load()
+    imgWidth, imgHeight = gridImage.size
 
 
-    x_offset = 10
-    block_size = 58  # Make sure this matches your grid size
+    xOffset = 10
+    blockSize = 58  # Make sure this matches your grid size
 
-    ref_background = (48, 74, 139)  # Reference background color
+    refBackground = (48, 74, 139)  # Reference background color
 
     # Sample points focused on block centers and edges
     # Defines multiple points to sample within each grid cell
 
-    sample_offsets = [
+    sampleOffsets = [
         (0, 0),     # Center
         (5, 0),     # Near right
         (-5, 0),    # Near left
@@ -89,48 +89,48 @@ def read_shapes_to_grid(image):
     ]
       
     # Initialize the grid with zeros (with a small extra buffer)
-    grid = np.zeros((img_height // block_size + 2, img_width // block_size + 2))
+    grid = np.zeros((imgHeight // blockSize + 2, imgWidth // blockSize + 2))
     x = -1
-    while (x + 1) * block_size + x_offset < img_width - 1:
+    while (x + 1) * blockSize + xOffset < imgWidth - 1:
         x += 1
         y = 0
-        in_background = True
-        while (y + 1) * block_size < img_height - 1:
+        ShapeDetected = False
+        while (y + 1) * blockSize < imgHeight - 1:
             y += 1
             
             # Sample multiple pixels in each block
-            base_x = x * block_size + x_offset
-            base_y = y * block_size
+            baseX = x * blockSize + xOffset
+            baseY = y * blockSize
             
             # Count both block and background pixels
-            bg_pixels = 0
-            block_pixels = 0
-            total_samples = len(sample_offsets)
+            bgPixels = 0
+            blockPixels = 0
+            totalSamples = len(sampleOffsets)
             
-            for offset_x, offset_y in sample_offsets:
+            for offsetX, offsetY in sampleOffsets:
                 try:
-                    sample_x = base_x + offset_x
-                    sample_y = base_y + offset_y
-                    if 0 <= sample_x < img_width and 0 <= sample_y < img_height:
-                        color_match = check_color(px[sample_x, sample_y], ref_background, 0.05)
-                        if color_match:
-                            bg_pixels += 1
+                    sampleX = baseX + offsetX
+                    sampleY = baseY + offsetY
+                    if 0 <= sampleX < imgWidth and 0 <= sampleY < imgHeight:
+                        colorMatch = check_color(px[sampleX, sampleY], refBackground, 0.05)
+                        if colorMatch:
+                            bgPixels += 1
                         else:
-                            block_pixels += 1
+                            blockPixels += 1
                 except IndexError:
-                    total_samples -= 1  # Reduce total if pixel is out of bounds
+                    totalSamples -= 1  # Reduce total if pixel is out of bounds
                     continue
             
             # Use ratio of block pixels to total valid samples
-            block_ratio = block_pixels / total_samples
-            is_background = block_ratio < 0.4  # If less than 40% of pixels are block pixels
+            blockRatio = blockPixels / totalSamples
+            isBackground = blockRatio < 0.4  # If less than 40% of pixels are block pixels
             
-            if in_background and not is_background:
-                in_background = False
+            if not ShapeDetected and not isBackground:
+                ShapeDetected = True
                 grid[y, x] = 1
-            elif not is_background:
+            elif not isBackground:
                 grid[y, x] = 1
-            elif not in_background and bg_pixels > total_samples * 0.7:
+            elif ShapeDetected and bgPixels > totalSamples * 0.7:
                 break
 
     return grid
