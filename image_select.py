@@ -20,10 +20,11 @@ def image_to_grid(image_path, grid_size=(8,8)):
     grayscale_image = image.convert('L')
     crop_grid = (50, 600, 1120, 1650)
     grid_image = grayscale_image.crop(crop_grid)
-    # grayscale_image.show()
+   
     # Step 3: Apply thresholding to convert the image to binary
     threshold = 85 
     binary_image = grid_image.point(lambda p: 255 if p > threshold else 0)
+
     # Step 4: Resize the image to the grid size
     resized_image = binary_image.resize(grid_size, Image.NEAREST)
 
@@ -35,18 +36,22 @@ def image_to_grid(image_path, grid_size=(8,8)):
 
     return grid
 
+# The function returns True if the pixel color is close to the background color, and False if it's different.
 
 def check_color(measured, reference, allowed_deviation):
-    correct = True
+    flag = True
     for i in range(3): 
+        # Check if the difference between measured and background color is greater than the allowed deviation
         if abs(measured[i] - reference[i]) > allowed_deviation * 255:
-            correct = False
-    return correct
+            flag = False
+    return flag
 
 def read_shapes_to_grid(image):
+    image = Image.open(image_path)
     # Convert the supplied image to a PIL Image if it's not already one
     if not isinstance(image, Image.Image):
         image = Image.fromarray(image)
+    
 
     # Define the region boundaries
     x_min = 100
@@ -55,12 +60,11 @@ def read_shapes_to_grid(image):
     y_max = 2200
     crop_grid = (x_min, y_min, x_max, y_max)
     grid_image = image.crop(crop_grid)
+
     # Load pixel data from the image
     px = grid_image.load()
     img_width, img_height = grid_image.size
-    # Define the width and height of the region based on the boundaries
-    region_width = x_max - x_min
-    region_height = y_max - y_min  
+
 
     x_offset = 10
     block_size = 58  # Make sure this matches your grid size
@@ -68,6 +72,8 @@ def read_shapes_to_grid(image):
     ref_background = (48, 74, 139)  # Reference background color
 
     # Sample points focused on block centers and edges
+    # Defines multiple points to sample within each grid cell
+
     sample_offsets = [
         (0, 0),     # Center
         (5, 0),     # Near right
@@ -83,22 +89,22 @@ def read_shapes_to_grid(image):
     ]
       
     # Initialize the grid with zeros (with a small extra buffer)
-    grid = np.zeros((region_height // block_size + 2, region_width // block_size + 2))
+    grid = np.zeros((img_height // block_size + 2, img_width // block_size + 2))
     x = -1
-    while (x + 1) * block_size + x_offset < region_width - 1:
+    while (x + 1) * block_size + x_offset < img_width - 1:
         x += 1
         y = 0
         in_background = True
-        while (y + 1) * block_size < region_height - 1:
+        while (y + 1) * block_size < img_height - 1:
             y += 1
             
             # Sample multiple pixels in each block
             base_x = x * block_size + x_offset
             base_y = y * block_size
             
-            # Count both matching and non-matching pixels
-            matching_pixels = 0
-            non_matching_pixels = 0
+            # Count both block and background pixels
+            bg_pixels = 0
+            block_pixels = 0
             total_samples = len(sample_offsets)
             
             for offset_x, offset_y in sample_offsets:
@@ -108,23 +114,23 @@ def read_shapes_to_grid(image):
                     if 0 <= sample_x < img_width and 0 <= sample_y < img_height:
                         color_match = check_color(px[sample_x, sample_y], ref_background, 0.05)
                         if color_match:
-                            matching_pixels += 1
+                            bg_pixels += 1
                         else:
-                            non_matching_pixels += 1
+                            block_pixels += 1
                 except IndexError:
                     total_samples -= 1  # Reduce total if pixel is out of bounds
                     continue
             
-            # Use ratio of non-matching to total valid samples
-            non_matching_ratio = non_matching_pixels / total_samples
-            is_background = non_matching_ratio < 0.4  # If less than 30% of pixels are non-background
+            # Use ratio of block pixels to total valid samples
+            block_ratio = block_pixels / total_samples
+            is_background = block_ratio < 0.4  # If less than 40% of pixels are block pixels
             
             if in_background and not is_background:
                 in_background = False
                 grid[y, x] = 1
             elif not is_background:
                 grid[y, x] = 1
-            elif not in_background and matching_pixels > total_samples * 0.7:
+            elif not in_background and bg_pixels > total_samples * 0.7:
                 break
 
     return grid
@@ -134,23 +140,9 @@ image_path ='uncompressed_images/IMG_0436.PNG'
 
 grid = image_to_grid(image_path)
 print(grid)
-image = Image.open(image_path)
-image.show()
-shape_grid = read_shapes_to_grid(image)
+
+shape_grid = read_shapes_to_grid(image_path)
 print(shape_grid)
 
-# image = Image.open(image_path)
-# print(image.size)
-
-# crop_grid = (x_min, y_min, x_max, y_max)
-# grid_image = image.crop(crop_grid)
-
-# # grid =shape_to_grid(grid_image)
-
-# # print(grid)
-# # image_to_binary_grid(shapes[2])
-# # shapes[0].show()
-# # shapes[0].save('shape_test/BB_Example_1_shape0.jpeg')
-# grid_image.show()
 
 
