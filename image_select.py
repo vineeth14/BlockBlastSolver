@@ -91,11 +91,26 @@ def read_grid(image):
     region_width = x_max - x_min
     region_height = y_max - y_min  
 
-    block_size  = 58 # Spacing between grid points (adjust based on your image)
-    x_offset = 10  # Starting horizontal offset
+    x_offset = 10
+    block_size = 58  # Make sure this matches your grid size
 
     ref_background = (48, 74, 139)  # Reference background color
 
+    # Sample points focused on block centers and edges
+    sample_offsets = [
+        (0, 0),     # Center
+        (5, 0),     # Near right
+        (-5, 0),    # Near left
+        (0, 5),     # Near down
+        (0, -5),    # Near up
+        (15, 0),    # Far right
+        (-15, 0),   # Far left
+        (0, 15),    # Far down
+        (0, -15),   # Far up
+        (0, 20),    # Extra far down
+        (0, -20),   # Extra far up    
+    ]
+      
     # Initialize the grid with zeros (with a small extra buffer)
     grid = np.zeros((region_height // block_size + 2, region_width // block_size + 2))
     x = -1
@@ -105,18 +120,45 @@ def read_grid(image):
         in_background = True
         while (y + 1) * block_size < region_height - 1:
             y += 1
-            color_match = check_color(px[x * block_size + x_offset, y * block_size], ref_background, 0.05)
-            if in_background and not color_match:
+            
+            # Sample multiple pixels in each block
+            base_x = x * block_size + x_offset
+            base_y = y * block_size
+            
+            # Count both matching and non-matching pixels
+            matching_pixels = 0
+            non_matching_pixels = 0
+            total_samples = len(sample_offsets)
+            
+            for offset_x, offset_y in sample_offsets:
+                try:
+                    sample_x = base_x + offset_x
+                    sample_y = base_y + offset_y
+                    if 0 <= sample_x < img_width and 0 <= sample_y < img_height:
+                        color_match = check_color(px[sample_x, sample_y], ref_background, 0.05)
+                        if color_match:
+                            matching_pixels += 1
+                        else:
+                            non_matching_pixels += 1
+                except IndexError:
+                    total_samples -= 1  # Reduce total if pixel is out of bounds
+                    continue
+            
+            # Use ratio of non-matching to total valid samples
+            non_matching_ratio = non_matching_pixels / total_samples
+            is_background = non_matching_ratio < 0.4  # If less than 30% of pixels are non-background
+            
+            if in_background and not is_background:
                 in_background = False
                 grid[y, x] = 1
-            elif not color_match:
+            elif not is_background:
                 grid[y, x] = 1
-            elif not in_background:
+            elif not in_background and matching_pixels > total_samples * 0.7:
                 break
 
     return grid
 
-image_path ='uncompressed_images/uncompressed_ss2.PNG'
+image_path ='uncompressed_images/IMG_0436.PNG'
 
 
 shapes =detect_bottom_shapes(image_path)
