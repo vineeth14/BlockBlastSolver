@@ -20,7 +20,6 @@ def image_to_grid(image_path, grid_size=(8,8)):
     grayscale_image = image.convert('L')
     crop_grid = (50, 600, 1120, 1650)
     grid_image = grayscale_image.crop(crop_grid)
-    grid_image.show()
     # grayscale_image.show()
     # Step 3: Apply thresholding to convert the image to binary
     threshold = 85 
@@ -34,37 +33,7 @@ def image_to_grid(image_path, grid_size=(8,8)):
     # Convert to 0s and 1s
     grid = np.where(grid == 255, 1, 0)
 
-    print(grid)
     return grid
-
-image_to_grid(image_path)
-
-
-def detect_bottom_shapes(image_path, grid_width=8, grid_height=8):
-    image = Image.open(image_path)
-
-    crop_grid = (0, 1400, 900, 1800)
-    grid_image = image.crop(crop_grid)
-    width, height = grid_image.size
-
-    pictures = 3
-    x_width, y_height = grid_image.size
-
-    # Get evenly spaced edges -> Evenly split the image into 3 parts
-    edges = np.linspace(0, x_width, pictures + 1)  
-    # Cropping images into variables
-    cropped_images = []
-
-    for i in range(len(edges) - 1):
-        start = edges[i]
-        end = edges[i + 1]        
-        box = (int(start), 0, int(end), y_height)  # Ensure values are integers
-        cropped_shape = grid_image.crop(box)
-        # cropped_np = np.array(cropped_shape)
-        cropped_images.append(cropped_shape) # Crop the shapes
-
-
-    return cropped_images
 
 
 def check_color(measured, reference, allowed_deviation):
@@ -84,10 +53,11 @@ def read_shapes_to_grid(image):
     y_min = 1700
     x_max = 1070
     y_max = 2200
-
+    crop_grid = (x_min, y_min, x_max, y_max)
+    grid_image = image.crop(crop_grid)
     # Load pixel data from the image
-    px = image.load()
-    img_width, img_height = image.size
+    px = grid_image.load()
+    img_width, img_height = grid_image.size
     # Define the width and height of the region based on the boundaries
     region_width = x_max - x_min
     region_height = y_max - y_min  
@@ -162,18 +132,16 @@ def read_shapes_to_grid(image):
 image_path ='uncompressed_images/IMG_0436.PNG'
 
 
-shapes =detect_bottom_shapes(image_path)
-# for shape in shapes:
-#     shape.show()
-#     grid = shape_to_grid(shape)
-#     print(grid)
+grid = image_to_grid(image_path)
+print(grid)
+image = Image.open(image_path)
+image.show()
+shape_grid = read_shapes_to_grid(image)
+print(shape_grid)
 
 # image = Image.open(image_path)
 # print(image.size)
-# x_min=100
-# y_min=1700
-# x_max=1070
-# y_max=2200
+
 # crop_grid = (x_min, y_min, x_max, y_max)
 # grid_image = image.crop(crop_grid)
 
@@ -184,6 +152,5 @@ shapes =detect_bottom_shapes(image_path)
 # # shapes[0].show()
 # # shapes[0].save('shape_test/BB_Example_1_shape0.jpeg')
 # grid_image.show()
-# grid = read_grid(grid_image)
-# print(grid)
+
 
