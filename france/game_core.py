@@ -7,7 +7,7 @@ def check_color(measured, reference, allowed_deviation):
             correct = False
     return correct
 
-class Square:
+class Block:
     def __init__(self, row, col, score=0):
         self.row = row
         self.col = col

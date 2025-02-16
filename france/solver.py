@@ -3,7 +3,7 @@ from time import sleep, time
 import pyautogui  # Required for proper positioning functionality
 from pynput.mouse import Button, Controller
 from itertools import permutations
-from game_core import Square, Shape, GameTurn, check_color
+from game_core import Block, Shape, GameTurn, check_color
 import numpy as np
 
 mouse = Controller()
@@ -62,13 +62,13 @@ def create_shapes(grid):
             if grid[row, col] == 1:
                 # Get coordinates of each 1 in the shape
                 grid[row, col] = 0
-                origin = Square(row, col)
-                frontier = [origin]
+                origin = Block(row, col)
+                edges = [origin]
                 shape = Shape([origin])
                 shapes.append(shape)
-                while len(frontier) > 0:
+                while len(edges) > 0:
                     new = []
-                    for square in frontier:
+                    for square in edges:
                         for possible in possible_squares:
                             drow, dcol = possible[0], possible[1]
                             if (square.row + drow < grid.shape[0] and 
@@ -77,9 +77,9 @@ def create_shapes(grid):
                                 square.col + dcol >= 0 and 
                                 grid[square.row + drow, square.col + dcol] == 1):
                                 grid[square.row + drow, square.col + dcol] = 0
-                                shape.squares.append(Square(square.row + drow, square.col + dcol))
-                                new.append(Square(square.row + drow, square.col + dcol))
-                    frontier = new[:]
+                                shape.squares.append(Block(square.row + drow, square.col + dcol))
+                                new.append(Block(square.row + drow, square.col + dcol))
+                    edges = new[:]
                 shape.initialize()
     return shapes
 
@@ -90,7 +90,7 @@ def count_holes(board):
         for col in range(8):
             if board[row, col] == 0:
                 board[row, col] = 1
-                frontier = [Square(row, col)]
+                frontier = [Block(row, col)]
                 count = 1
                 while len(frontier) > 0:
                     new = []
@@ -103,7 +103,7 @@ def count_holes(board):
                                 square.col + dcol >= 0 and 
                                 board[square.row + drow, square.col + dcol] == 0):
                                 board[square.row + drow, square.col + dcol] = 1
-                                new.append(Square(square.row + drow, square.col + dcol))
+                                new.append(Block(square.row + drow, square.col + dcol))
                                 count += 1
                     frontier = new[:]
                 holes.append(count)
@@ -219,7 +219,7 @@ def position_shapes(board, shapes):
 
                         test_turn = GameTurn(order, score + turn.score, np.copy(test_board))
                         test_turn.positions = turn.positions[:]
-                        test_turn.positions[number] = Square(row, col, score)
+                        test_turn.positions[number] = Block(row, col, score)
                         square_turns.append(test_turn)
                         
                 if len(square_turns) == 0:

@@ -29,12 +29,12 @@ def image_to_grid(image_path, grid_size=(8,8)):
     resizedImage = binaryImage.resize(grid_size, Image.NEAREST)
 
     # Step 5: Convert the image to a NumPy array
-    grid = np.array(resizedImage)
+    board = np.array(resizedImage)
 
     # Convert to 0s and 1s
-    grid = np.where(grid == 255, 1, 0)
+    board = np.where(board == 255, 1, 0)
 
-    return grid
+    return board
 
 # The function returns True if the pixel color is close to the background color, and False if it's different.
 
@@ -135,11 +135,11 @@ def read_shapes_to_grid(image):
 
     return grid
 
-image_path ='uncompressed_images/IMG_0436.PNG'
+image_path ='uncompressed_images/IMG_0437.PNG'
 
 
-grid = image_to_grid(image_path)
-print(grid)
+board = image_to_grid(image_path)
+print(board)
 
 shape_grid = read_shapes_to_grid(image_path)
 print(shape_grid)
