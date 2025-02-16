@@ -15,18 +15,17 @@ def create_shapes(grid):
                 q = [origin]
                 shapes.append(shape)
                 while len(q)>0:
-                    for block in q:
-                        q.pop()
+                    for i in range(len(q)):
+                        block = q.pop()
                         for dr,dc in directions:
                             nr, nc = dr+block.row, dc+block.col
-                            if nr in range(row) and nc in range(col) and grid[nr][nc] == 1:
+                            if nr in range(grid.shape[0]) and nc in range(grid.shape[1]) and grid[nr][nc] == 1:
                                 grid[nr][nc] = 0
                                 q.append(Block(nr,nc))
                                 shape.segment.append(Block(nr,nc))
-                # shape.initialize()
+                shape.initialize()
     return shapes
 
 grid = read_shapes_to_grid('uncompressed_images/IMG_0437.PNG')
 shapes = create_shapes(grid)
-for shape in shapes:
-    print(shape.segment[0].row, shape.segment[0].col)
+ 
