@@ -6,9 +6,9 @@ class Block:
         self.score = score
 
 class Shape:
-    def __init__(self, blocks):
-        #blocks is a list of blocks
-        self.blocks = blocks
+    def __init__(self, segment):
+        #segment is a list of blocks
+        self.segment = segment
         self.width = 0
         self.height = 0
         self.borders = []

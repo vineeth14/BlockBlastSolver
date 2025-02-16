@@ -12,21 +12,21 @@ def create_shapes(grid):
                 grid[row][col] = 0
                 origin = Block(row,col)
                 shape = Shape([origin])
-                component = [origin]
+                q = [origin]
                 shapes.append(shape)
-                while len(component)>0:
-                    for block in component:
-                        component.pop()
+                while len(q)>0:
+                    for block in q:
+                        q.pop()
                         for dr,dc in directions:
                             nr, nc = dr+block.row, dc+block.col
                             if nr in range(row) and nc in range(col) and grid[nr][nc] == 1:
                                 grid[nr][nc] = 0
-                                component.append(Block(nr,nc))
-                                shape.block.append(Block(nr,nc))
+                                q.append(Block(nr,nc))
+                                shape.segment.append(Block(nr,nc))
                 # shape.initialize()
     return shapes
 
 grid = read_shapes_to_grid('uncompressed_images/IMG_0437.PNG')
 shapes = create_shapes(grid)
 for shape in shapes:
-    print(shape.blocks[0].row, shape.blocks[0].col)
+    print(shape.segment[0].row, shape.segment[0].col)
