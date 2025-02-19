@@ -148,7 +148,7 @@ def position_shapes(board, shapes):
             
             # Try each possible position for current shape
             for turn in order_turns:
-                square_turns = []
+                square_turns = [] #moves
                 # Try each position on the board
                 for row in range(8 - shape.height + 1):
                     for col in range(8 - shape.width + 1):

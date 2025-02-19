@@ -74,89 +74,98 @@ def solve_board(board,shapes):
         alreadySeen.append(order)
 
         currentTurn = GameTurn(order)
-        orderTurn = [currentTurn]
         currentTurn.board = np.copy(originalBoard)
-
+        orderTurn = [currentTurn]
         for number in order:
-            number_turns = []
-            shape = shapes[number]
+
             for turn in orderTurn:
-                block_turns = []
-                for r in range(8-shape.width+1):
-                    for c in range(8-shape.height+1):
+                shape = shapes[number]
+                moves = []
+                for row_idx in range(8-shape.width+1):
+                    for col_idx in range(8-shape.height+1):
                         skip=False
                         for block in shape.segment:
-                            if turn.board[r+block.row][c+block.col]==1:
+                            if currentTurn.board[row_idx+block.row][col_idx+block.col]==1:
                                 skip=True
                                 break
                         if skip:
                             continue
-                        tempBoard = np.copy(originalBoard)
+                
+                        tempBoard = np.copy(currentTurn.board)
                         score = 0
-                        for block in shape.segment:
-                            if r+block.row == -1 or r+block.row == 8 or c+block.col == -1 or c+block.col == 8:
-                                score+=1
+
+                        #checking if the previous computed block's border + the current coords are still touching the border
+                        for block in shape.borders:
+                            if row_idx+block.row not in range(8) or col_idx+block.col not in range(8):
+                                score +=1
                             else:
-                                score+=tempBoard[r+block.row][c+block.col] #isn't this just 0?
+                                #Adding score if the shape is touching other blocks
+                                score+=tempBoard[row_idx+block.row][col_idx+block.col]
+                        
                         for block in shape.segment:
-                            tempBoard[r+block.row][c+block.col]=1
+                            tempBoard[row_idx+block.row][col_idx+block.col]=1
 
-                        bonus = 30
-                        columns,rows = [],[]
 
-                        for c_idx in range(8):
-                            if sum(tempBoard[r_idx][c_idx] for r_idx in range(8)) == 8 :
-                                score+=bonus
-                                columns.append(c_idx)
+                        #Finding Completed Columns and Rows and rewarding bonus points
+                        bonus = 30 
+                        rows,columns = [], []
+                        for r in range(8):
+                            if sum(tempBoard[r][c] for c in range(8)) == 8:
+                                   score += bonus
+                                   rows.append(r)
+                        for c in range(8):
+                            if sum(tempBoard[r][c] for r in range(8)) == 8:
+                                score += bonus
+                                columns.append(c)
+
+
+                        # Clearing Rows and Columns
+                        for c in columns:
+                            for r in range(8):
+                                tempBoard[r][c] = 0
+                        for r in rows:
+                            for c in range(8):
+                                tempBoard[r][c] = 0
                         
-                        for r_idx in range(8):
-                            if sum(tempBoard[r_idx][c_idx] for c_idx in range(8)) == 8:
-                                score+=bonus
-                                rows.append(r_idx)
+                        #Board is now in state after piece is placed and completed row and column are removed
                         
-                        # Clear completed rows/columns
-                        for c_idx in columns:
-                            for r_idx in range(8):
-                                tempBoard[r_idx, c_idx] = 0
-                        for r_idx in rows:
-                            for c_idx in range(8):
-                                tempBoard[r_idx, c_idx] = 0
-
-                        # # Score progress toward completing rows/columns
-                        #     coeff = 2
-                        #     for c in range(8):
-                        #         score += sum(board[r, c] for r in range(8)) * coeff
-                        #         score += sum(board[c, r] for r in range(8)) * coeff
-                            
-                        # Penalize isolated squares
-                        coeff = 6
-                        possible_blocks = [(-1, 0), (0, 1), (1, 0), (0, -1)]
-                        for r_idx in range(8):
-                            for c_idx in range(8):
-                                if tempBoard[r_idx, c_idx] == 1:
-                                    neighbors = 0
-                                    for block in possible_blocks:
-                                        if (block[0]+r_idx not in range(8) or block[1]+c_idx not in range(8) or 
-                                            tempBoard[block[0] + r_idx][block[1] + c_idx] == 0):
-                                            neighbors += 1
-                                    if neighbors > 3:
-                                        score -= neighbors * coeff
-
-                        # Penalize holes
+                        #Scoring partially completed rows/columns
                         coeff = 2
+                        for r in range(8):
+                            score += sum(tempBoard[r][c] for c in range(8)) * coeff
+                        for c in range(8):
+                            score += sum(tempBoard[r][c] for r in range(8)) * coeff
+
+                        #Penalize isolated blocks
+                        coeff = 6
+                        directions = [[-1,0],[0,1],[1,0],[0,-1]]
+                        for r in range(8):
+                            for c in range(8):
+                                if tempBoard[r][c] == 1:
+                                    empty_space = 0
+                                    for dir in directions:
+                                        nr,nc =d ir[0] + r, dir[1] + c
+                                        if nr not in range(8) or nc not in range(8) or tempBoard[nr][nc] == 0:
+                                            empty_space += 1
+                                    if empty_space > 3:
+                                        score -= empty_space* coeff
+                        
+                        #Penalize Holes
+                        coef = 2
                         holes = count_holes(np.copy(tempBoard))
                         for hole in holes:
                             score -= (len(holes) - 1) * 1 / hole * coeff
 
                         # Create new turn with this placement
-                        newTurn = GameTurn(order, score + turn.score, np.copy(tempBoard))
-                        newTurn.positions = turn.positions[:]
-                        newTurn.positions[number] = Block(r, c, score)
-                        block_turns.append(newTurn)
-                    
-                                    
+                        new_turn = GameTurn(order, score + turn.score, np.copy(tempBoard))
+                        new_turn.positions = turn.positions[:]
+                        new_turn.positions[number] = Block(row_idx, col_idx, score)
+                        moves.append(new_turn)
+                                        
 
-                            
+
+                        
+                        
 
             
         
