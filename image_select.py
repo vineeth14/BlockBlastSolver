@@ -139,10 +139,10 @@ image_path ='uncompressed_images/IMG_0437.PNG'
 
 
 board = image_to_grid(image_path)
-print(board)
+# print(board)
 
 shape_grid = read_shapes_to_grid(image_path)
-print(shape_grid)
+# print(shape_grid)
 
 
 

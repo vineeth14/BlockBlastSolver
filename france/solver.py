@@ -118,7 +118,9 @@ def position_shapes(board, shapes):
     already_seen = []
     fill_count = np.count_nonzero(board)
     
+    # Phase 1: Try each possible order of the 3 shapes
     for order in permutations(range(3)):
+        # Skip identical shape combinations
         seen = False
         for permut in already_seen:
             count = 0
@@ -133,19 +135,24 @@ def position_shapes(board, shapes):
             continue
         already_seen.append(order)
         
+        # Phase 2: Initialize turn for this order
         current_turn = GameTurn(order)
         current_turn.board = np.copy(original_board)
         possible = True
         order_turns = [current_turn]
         
+        # Phase 3: Place each shape in the current order
         for number in order:
             number_turns = []
             shape = shapes[number]
+            
+            # Try each possible position for current shape
             for turn in order_turns:
                 square_turns = []
+                # Try each position on the board
                 for row in range(8 - shape.height + 1):
                     for col in range(8 - shape.width + 1):
-                        # Check if space is taken
+                        # Check if position is valid
                         skip = False
                         for square in shape.squares:
                             if turn.board[row + square.row, col + square.col] == 1:
@@ -154,33 +161,35 @@ def position_shapes(board, shapes):
                         if skip:
                             continue
                             
+                        # Phase 4: Score calculation
                         test_board = np.copy(turn.board)
                         # Calculate score based on neighbors
                         score = 0
+                        
+                        # Score border touches
                         for square in shape.borders:
                             if row + square.row == -1 or row + square.row == 8 or col + square.col == -1 or col + square.col == 8:
                                 score += 1
                             else:
                                 score += test_board[row + square.row, col + square.col]
-                                
+                        
                         # Place the piece
                         for square in shape.squares:
                             test_board[row + square.row, col + square.col] = 1
                             
-                        # Remove full columns and increase score
+                        # Score completed rows/columns (bonus = 30)
                         bonus = 30
                         rows, cols = [], []
                         for c in range(8):
                             if sum(test_board[r, c] for r in range(8)) == 8:
                                 score += bonus
                                 cols.append(c)
-                                
-                        # Remove full rows and increase score
                         for r in range(8):
                             if sum(test_board[r, c] for c in range(8)) == 8:
                                 score += bonus
                                 rows.append(r)
                                 
+                        # Clear completed rows/columns
                         for c in cols:
                             for r in range(8):
                                 test_board[r, c] = 0
@@ -188,13 +197,13 @@ def position_shapes(board, shapes):
                             for c in range(8):
                                 test_board[r, c] = 0
                                 
-                        # Favor filling rows and columns
-                        coeff = 2  # coefficient must be greater than 1 for multiplicative effect on row/col completion
+                        # Score progress toward completing rows/columns
+                        coeff = 2
                         for c in range(8):
                             score += sum(board[r, c] for r in range(8)) * coeff
                             score += sum(board[c, r] for r in range(8)) * coeff
                             
-                        # Penalize creation of single square blocks
+                        # Penalize isolated squares
                         coeff = 6
                         possible_squares = [(-1, 0), (0, 1), (1, 0), (0, -1)]
                         for r in range(8):
@@ -217,6 +226,7 @@ def position_shapes(board, shapes):
                         for hole in holes:
                             score -= (len(holes) - 1) * 1 / hole * coeff
 
+                        # Create new turn with this placement
                         test_turn = GameTurn(order, score + turn.score, np.copy(test_board))
                         test_turn.positions = turn.positions[:]
                         test_turn.positions[number] = Block(row, col, score)
@@ -250,7 +260,7 @@ def position_shapes(board, shapes):
                 print("impossible")
                 possible = False
                 break
-            order_turns = number_turns[:]
+            order_turns = square_turns[:]
             
         if possible:
             for turn in order_turns:

@@ -35,7 +35,7 @@ class Shape:
         x0 = 30
 
         min_row = 100
-        max_row = 0
+        max_row = 0                 
         min_col = 100
         max_col = 0
         for square in self.squares:
@@ -58,8 +58,10 @@ class Shape:
             square.row -= min_row
             square.col -= min_col
 
-        # Define border squares
-        coords = [(square.row, square.col) for square in self.squares]
+
+        coords = []
+        for square in self.squares:
+            coords.append((square.row, square.col))
         for square in self.squares:
             if (square.row + 1, square.col) not in coords:
                 self.borders.append(Square(square.row + 1, square.col))

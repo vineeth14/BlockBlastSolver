@@ -1,3 +1,4 @@
+import numpy as np
 
 class Block:
     def __init__(self, row, col, score=0):
@@ -41,7 +42,7 @@ class Shape:
         coords = []
         for block in self.segment:
             coords.append((block.row, block.col))
-        #Define the borders of each shape
+        #Define the borders of each shape, by checking the 4 adjacent positions
         for block in self.segment:
             if (block.row + 1, block.col) not in coords:
                 self.borders.append(Block(block.row + 1, block.col))
@@ -64,4 +65,13 @@ class Shape:
 
 def sort_blocks(block):
     return (block.row, block.col)
+
+
+class GameTurn:
+    def __init__(self, order, score=0, board=np.zeros((8, 8))):
+        self.order = order
+        self.positions = [0, 0, 0]
+        self.score = score
+        self.board = board
+
     
