@@ -1,4 +1,5 @@
-from classes import Block, Shape, GameTurn
+#!/usr/bin/env python3
+from classes import Block, Shape, GameTurn, sort_turns
 from image_select import read_shapes_to_grid, image_to_grid
 from itertools import permutations
 import numpy as np
@@ -25,7 +26,7 @@ def create_shapes(grid):
                                 q.append(Block(nr,nc))
                                 shape.segment.append(Block(nr,nc))
                 shape.initialize()
-    print(len(shapes))
+
     return shapes
 
 def count_holes(board):
@@ -54,9 +55,7 @@ def solve_board(board,shapes):
     originalBoard = np.copy(board)
     turns = []
     alreadySeen = []
-    fill_count = np.count_nonzero(board)
-
-
+    fillCount = np.count_nonzero(board)
     for order in permutations(range(3)):
         seen = False
         for permut in alreadySeen:
@@ -73,52 +72,63 @@ def solve_board(board,shapes):
             continue
         alreadySeen.append(order)
 
+        # Initialize turn for current order
         currentTurn = GameTurn(order)
         currentTurn.board = np.copy(originalBoard)
-        orderTurn = [currentTurn]
-        for number in order:
+        boardStates = [currentTurn] #List of all valid board states
+        possible = True
 
-            for turn in orderTurn:
-                shape = shapes[number]
-                moves = []
-                for row_idx in range(8-shape.width+1):
-                    for col_idx in range(8-shape.height+1):
+        #Testing each shape in current order
+        for number in order:
+            shape = shapes[number]
+            acceptedMoves = [] #Aggregated candidate moves across all board states for the current shape.
+
+            #For each valid board state we must try all order of shape placement (BFS)
+            for turn in boardStates:
+                validPlacements = [] #Temporary collection of all valid moves found when trying to place the current shape at different positions on a single board state
+                for row_idx in range(8-shape.height+1):
+                    for col_idx in range(8-shape.width+1):
                         skip=False
+                        #Checking each position on the board
                         for block in shape.segment:
-                            if currentTurn.board[row_idx+block.row][col_idx+block.col]==1:
+                            if turn.board[row_idx+block.row][col_idx+block.col]==1:
                                 skip=True
                                 break
                         if skip:
                             continue
-                
-                        tempBoard = np.copy(currentTurn.board)
+                        
+                        #Score Calculation
+                        tempBoard = np.copy(turn.board) #board to make changes against after placing shape
                         score = 0
 
-                        #checking if the previous computed block's border + the current coords are still touching the border
+                        #checking if the computed block's border + the current coords are still touching the border
                         for block in shape.borders:
                             if row_idx+block.row not in range(8) or col_idx+block.col not in range(8):
                                 score +=1
                             else:
                                 #Adding score if the shape is touching other blocks
                                 score+=tempBoard[row_idx+block.row][col_idx+block.col]
-                        
+
+                        #Placing shape
                         for block in shape.segment:
                             tempBoard[row_idx+block.row][col_idx+block.col]=1
 
 
                         #Finding Completed Columns and Rows and rewarding bonus points
-                        bonus = 30 
+                        bonus = 50
                         rows,columns = [], []
                         for r in range(8):
                             if sum(tempBoard[r][c] for c in range(8)) == 8:
                                    score += bonus
                                    rows.append(r)
+
+                                   
                         for c in range(8):
                             if sum(tempBoard[r][c] for r in range(8)) == 8:
                                 score += bonus
                                 columns.append(c)
 
-
+                        
                         # Clearing Rows and Columns
                         for c in columns:
                             for r in range(8):
@@ -127,14 +137,18 @@ def solve_board(board,shapes):
                             for c in range(8):
                                 tempBoard[r][c] = 0
                         
+                        
                         #Board is now in state after piece is placed and completed row and column are removed
                         
                         #Scoring partially completed rows/columns
-                        coeff = 2
-                        for r in range(8):
-                            score += sum(tempBoard[r][c] for c in range(8)) * coeff
-                        for c in range(8):
-                            score += sum(tempBoard[r][c] for r in range(8)) * coeff
+                        #Rewarding bc partially completed rows are desirable
+                        # coeff = 2
+                        # for r in range(8):
+                        #     filled = sum(tempBoard[r][c] for c in range(8)) * coeff
+                        #     score += filled 
+                        # for c in range(8):
+                        #     filled = sum(tempBoard[r][c] for r in range(8)) * coeff
+                        #     score += filled 
 
                         #Penalize isolated blocks
                         coeff = 6
@@ -142,13 +156,13 @@ def solve_board(board,shapes):
                         for r in range(8):
                             for c in range(8):
                                 if tempBoard[r][c] == 1:
-                                    empty_space = 0
+                                    emptySpace = 0
                                     for dir in directions:
-                                        nr,nc =d ir[0] + r, dir[1] + c
+                                        nr,nc =dir[0] + r, dir[1] + c
                                         if nr not in range(8) or nc not in range(8) or tempBoard[nr][nc] == 0:
-                                            empty_space += 1
-                                    if empty_space > 3:
-                                        score -= empty_space* coeff
+                                            emptySpace += 1
+                                    if emptySpace > 3:
+                                        score -= emptySpace* coeff
                         
                         #Penalize Holes
                         coef = 2
@@ -156,29 +170,104 @@ def solve_board(board,shapes):
                         for hole in holes:
                             score -= (len(holes) - 1) * 1 / hole * coeff
 
-                        # Create new turn with this placement
-                        new_turn = GameTurn(order, score + turn.score, np.copy(tempBoard))
-                        new_turn.positions = turn.positions[:]
-                        new_turn.positions[number] = Block(row_idx, col_idx, score)
-                        moves.append(new_turn)
-                                        
+                        # Create new turn with this placement 
+                        newTurn = GameTurn(order, score + turn.score, np.copy(tempBoard))
+                        newTurn.positions = turn.positions[:] #shallow copy
+                        # Storing positions of shape with score
+                        newTurn.positions[number] = Block(row_idx, col_idx, score)
+                        validPlacements.append(newTurn)
+                # Done processing the board with all 3 shapes and permutations. 
 
+                if len(validPlacements) == 0 :
+                    # No valid Moves
+                    continue
+                
+                seenScore = []
+                for placement in validPlacements:
+                    if fillCount>15:
+                        acceptedMoves.append(placement)
+                    else:
+                        # Skipping boards(valid placements) with same score because when we have a relatively emtpy board, 
+                        # we don't need to consider every valid placement with the same score.
+                        skip = False
+                        for seen in seenScore:
+                            if seen == placement.score:
+                                skip = True
+                                break
+                        if not skip:
+                            acceptedMoves.append(placement)
+                            seenScore.append(placement.score)
 
+            if len(acceptedMoves) == 0:
+                print("impossible")
+                possible = False
+                break
+            #Updating board states with acceptedMoves before next shape
+            boardStates = acceptedMoves[:]
+
+        #If possible to place 3 shapes, boardStates will contain a list of GameTurn objects
+        # representing all possible ways to place the 3 shapes on the board.
+        if possible:
+            for turn in boardStates:
+                turns.append(turn)
+
+    if len(turns) > 0:
+        #Sorting the turns by score in descending order
+        turns.sort(reverse=True, key=sort_turns)
+        print(f"{len(turns)} possible boards")
+        return turns[0]
+    else:
+        return "Lost"
                         
                         
-
-            
+def generate_step_boards(board, shapes, winning_turn):
+    step_boards = []
+    current_board = np.copy(board)
+    print(winning_turn.order)
+    # For each shape in the winning order
+    for step, shape_idx in enumerate(winning_turn.order, 1):  # start=1 to use 1,2,3 as markers
+        # Create a new board for this step
+        step_board = np.copy(current_board)
+        position = winning_turn.positions[shape_idx]
         
+        # Place the shape at its position using the step number (1,2,3) instead of 1
+        for block in shapes[shape_idx].segment:
+            step_board[position.row + block.row][position.col + block.col] = step
+            
+        step_boards.append(step_board)
+        current_board = np.copy(step_board)
+        
+        # Clear any completed rows and columns
+        rows, columns = [], []
+        for r in range(8):
+            if sum(bool(current_board[r][c]) for c in range(8)) == 8:  # using bool() to count any non-zero value
+                rows.append(r)
+        for c in range(8):
+            if sum(bool(current_board[r][c]) for r in range(8)) == 8:
+                columns.append(c)
+                
+        # Clear them
+        for c in columns:
+            for r in range(8):
+                current_board[r][c] = 0
+        for r in rows:
+            for c in range(8):
+                current_board[r][c] = 0
+    
+    return step_boards
 
 
-
-
-grid = read_shapes_to_grid('uncompressed_images/IMG_0437.PNG')
+grid = read_shapes_to_grid('uncompressed_images/IMG_0414.PNG')
+# print(grid)
 shapes = create_shapes(grid)
 
-board = image_to_grid('uncompressed_images/IMG_0437.PNG')
-# print(board)
-holes = count_holes(board)
+board = image_to_grid('uncompressed_images/IMG_0414.PNG')
+# print(board,shapes)
+# holes = count_holes(board)
 # print(holes)
-solve_board(board,shapes)
+turn =solve_board(board,shapes)
+stepBoards = generate_step_boards(board, shapes, turn)
+print("BOARD \n", board, "\n")
+for stepBoard in stepBoards:
+    print(stepBoard, "\n")
  

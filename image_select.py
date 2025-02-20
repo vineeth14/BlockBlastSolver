@@ -1,3 +1,5 @@
+  #!/usr/bin/env python3
+
 # Testing OpenCV to see if it can detect shapes in the uploaded image
 #Split image into 2 parts
 # 1.Convert to grayscale
@@ -10,7 +12,7 @@ import matplotlib.pyplot as plt
 
 
 
-image_path ='uncompressed_images/IMG_0437.PNG'
+# image_path ='uncompressed_images/IMG_0437.PNG'
 
 
 def image_to_grid(image_path, grid_size=(8,8)):
@@ -47,7 +49,7 @@ def check_color(measured, reference, allowed_deviation):
     return flag
 
 def read_shapes_to_grid(image):
-    image = Image.open(image_path)
+    image = Image.open(image)
     # Convert the supplied image to a PIL Image if it's not already one
     if not isinstance(image, Image.Image):
         image = Image.fromarray(image)
@@ -135,13 +137,13 @@ def read_shapes_to_grid(image):
 
     return grid
 
-image_path ='uncompressed_images/IMG_0437.PNG'
+# image_path ='uncompressed_images/IMG_0435.PNG'
 
 
-board = image_to_grid(image_path)
+# board = image_to_grid(image_path)
 # print(board)
 
-shape_grid = read_shapes_to_grid(image_path)
+# shape_grid = read_shapes_to_grid(image_path)
 # print(shape_grid)
 
 

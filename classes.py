@@ -60,11 +60,15 @@ class Shape:
         self.segment.sort(key=sort_blocks)
         self.borders.sort(key=sort_blocks)
 
-        print("Squares", [(square.row, square.col) for square in self.segment])
-        print("Borders", [(square.row, square.col) for square in self.borders])
+        # print("Squares", [(square.row, square.col) for square in self.segment])
+        # print("Borders", [(square.row, square.col) for square in self.borders])
 
 def sort_blocks(block):
     return (block.row, block.col)
+
+
+def sort_turns(turn):
+    return turn.score
 
 
 class GameTurn:
