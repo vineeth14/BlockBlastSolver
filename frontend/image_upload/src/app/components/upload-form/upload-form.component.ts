@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { GridComponent } from '../grid/grid.component';
 
 @Component({
   selector: 'app-upload-form',
   standalone: true,
-  imports: [CommonModule, HttpClientModule],
+  imports: [CommonModule, HttpClientModule, GridComponent],
   templateUrl: './upload-form.component.html',
   styleUrl: './upload-form.component.css'
 })

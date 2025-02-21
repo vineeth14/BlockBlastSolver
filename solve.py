@@ -233,7 +233,7 @@ def generate_step_boards(board, shapes, winning_turn):
         
         # Place the shape at its position using the step number (1,2,3) instead of 1
         for block in shapes[shape_idx].segment:
-            step_board[position.row + block.row][position.col + block.col] = step
+            step_board[position.row + block.row][position.col + block.col] = step+1
             
         step_boards.append(step_board)
         current_board = np.copy(step_board)

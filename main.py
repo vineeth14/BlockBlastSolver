@@ -20,20 +20,17 @@ app.add_middleware(
 )
 
 processing_status ={}
-def process_image(image, task_id):
-    try: 
-        image = Image.open(io.BytesIO(image))
-        board = image_to_grid(image)
-        grid = read_shapes_to_grid(image)
-        shapes = create_shapes(grid)
-        turn =solve_board(board,shapes)
-        stepBoards = generate_step_boards(board, shapes, turn)
-        # Store the result and update status.
-        for step in stepBoards:
-            print(type(step))
-        processing_status[task_id] = {'status': 'completed', 'result': stepBoards}
-    except Exception as e:
-        processing_status[task_id] = {'status': 'failed', 'error': str(e)}
+def process_image(image):
+
+    image = Image.open(io.BytesIO(image))
+    board = image_to_grid(image)
+    grid = read_shapes_to_grid(image)
+    shapes = create_shapes(grid)
+    turn =solve_board(board,shapes)
+    stepBoards = generate_step_boards(board, shapes, turn)
+    # Store the result and update status.
+
+    return stepBoards
 
 
 @app.get("/")
@@ -42,26 +39,23 @@ async def root():
 
 @app.post("/upload/")
 async def create_upload_file(file: UploadFile, background_tasks: BackgroundTasks):
-    if not file.content_type.startswith('image/'):
-        raise HTTPException(status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, detail='Invalid format, file must be an image.')
-    try:
-        image = await file.read()
-        task_id = str(uuid.uuid4())
-        processing_status[task_id] = {'status': 'processing'}
-        background_tasks.add_task(process_image, image, task_id)
-    except Exception as e:
-        print(f"Error processing image: {str(e)}")
-        return HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
-        )
-    return {'task_id': task_id}
+    # if not file.content_type.startswith('image/'):
+    #     raise HTTPException(status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, detail='Invalid format, file must be an image.')
+    # try:
+    #     image = await file.read()
+    #     task_id = str(uuid.uuid4())
+    #     processing_status[task_id] = {'status': 'processing'}
+    #     background_tasks.add_task(process_image, image, task_id)
+    # except Exception as e:
+    #     print(f"Error processing image: {str(e)}")
+    #     return HTTPException(
+    #         status_code=status.HTTP_400_BAD_REQUEST,
+    #         detail=str(e)
+    #     )
+    image = await file.read()
+    stepBoards = process_image(image)
+    stepBoards_serialized = [step.tolist() for step in stepBoards]
+    return stepBoards_serialized
 
-@app.get('/solution/{task_id}')
-async def get_solution(task_id: str):
-    if task_id not in processing_status:
-        raise HTTPException(status_code=404, detail='Solution not found')
-    result = processing_status[task_id]
-    print(type(result))
-    return 
+
 
