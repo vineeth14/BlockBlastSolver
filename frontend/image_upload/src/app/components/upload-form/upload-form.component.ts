@@ -16,6 +16,7 @@ export class UploadFormComponent {
   fileName = '';
   fileSize = '';
   uploadStatus: number | undefined;
+  gridData: any[][] | null = null;
   private apiUrl = 'http://localhost:8000/upload/'
 
   constructor(private http: HttpClient) {}
@@ -42,6 +43,8 @@ export class UploadFormComponent {
         next: (response: any) => {
           this.uploadResult = 'Uploaded';
           this.uploadStatus = 200;
+          this.gridData = response;
+          console.log(this.gridData);
         },
         error: (error: any) => {
           if (error.status === 400) {
@@ -65,6 +68,16 @@ export class UploadFormComponent {
     if (event.dataTransfer) {
       const file: File = event.dataTransfer.files[0];
       this.onFileSelected(event, event.dataTransfer.files[0]);
+    }
+  }
+
+  getColorForCell(value: number): string {
+    switch(value) {
+      case 1: return '#4CAF50'; // Green
+      case 2: return '#2196F3'; // Blue
+      case 3: return '#F44336'; // Red
+      case 4: return '#FFEB3B'; // Yellow
+      default: return '#FFFFFF'; // White
     }
   }
 }

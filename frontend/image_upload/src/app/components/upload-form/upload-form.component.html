@@ -52,3 +52,15 @@
         </div>
     </div>
 </form>
+
+ <div class='grids-container' *ngIf='gridData'>
+  <div class='grid' *ngFor='let board of gridData; let i = index'>
+    <h3>Step {{i + 1}}</h3>
+    <div class='grid-row' *ngFor='let j of [0,1,2,3,4,5,6,7]'>
+      <div class='grid-cell' 
+           *ngFor='let k of [0,1,2,3,4,5,6,7]'
+           [style.background-color]="getColorForCell(board[j][k])">
+      </div>
+    </div>
+  </div>
+</div>
