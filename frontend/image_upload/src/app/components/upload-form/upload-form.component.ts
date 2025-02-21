@@ -47,6 +47,7 @@ export class UploadFormComponent {
           this.uploadResult = 'Uploaded';
           this.uploadStatus = 200;
           this.gridData = response['stepBoards'];
+          this.gridData?.unshift(response['board']);
           this.completionCounter = response['completion_counter'];
           // this.board = response['board'];
           console.log(response);

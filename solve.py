@@ -259,6 +259,5 @@ def generate_step_boards(board, shapes, winning_turn):
         for r in rows:
             for c in range(8):
                 current_board[r][c] = 0
-    print(completion_counter)
     return completion_counter, step_boards
 
