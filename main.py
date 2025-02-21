@@ -27,10 +27,10 @@ def process_image(image):
     grid = read_shapes_to_grid(image)
     shapes = create_shapes(grid)
     turn =solve_board(board,shapes)
-    stepBoards = generate_step_boards(board, shapes, turn)
+    completion_counter,stepBoards = generate_step_boards(board, shapes, turn)
     # Store the result and update status.
 
-    return board,stepBoards
+    return board,stepBoards,completion_counter
 
 
 @app.get("/")
@@ -40,9 +40,12 @@ async def root():
 @app.post("/upload/")
 async def create_upload_file(file: UploadFile, background_tasks: BackgroundTasks):
     image = await file.read()
-    board,stepBoards = process_image(image)
+    board,stepBoards,completion_counter = process_image(image)
     stepBoards_serialized = [step.tolist() for step in stepBoards]
-    return board.tolist(),stepBoards_serialized
-
-
+    response_object = {
+        'board': board.tolist(),
+        'stepBoards': stepBoards_serialized,
+        'completion_counter': completion_counter
+    }
+    return response_object
 

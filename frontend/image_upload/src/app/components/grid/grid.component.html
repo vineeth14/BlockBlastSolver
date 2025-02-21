@@ -1,6 +1,11 @@
 <div class='grids-container' *ngIf='gridData'>
   <div class='grid' *ngFor='let board of gridData; let i = index'>
-    <h3>Step {{i + 1}}</h3>
+    <h3>Step {{i + 1}} <br>
+    <ng-container *ngIf='completionCounter[i+1]?.length > 0;'>
+      Completed Rows: {{ completionCounter[i+1][0][0] }}<br>
+      Completed Columns: {{ completionCounter[i+1][0][1] }}
+    </ng-container>
+  </h3>
     <div class='grid-row' *ngFor='let j of boardSize'>
       <div class='grid-cell' 
            *ngFor='let k of boardSize'

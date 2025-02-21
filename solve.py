@@ -224,6 +224,7 @@ def solve_board(board,shapes):
                         
 def generate_step_boards(board, shapes, winning_turn):
     step_boards = []
+    completion_counter = {1:[],2:[],3:[]}
     current_board = np.copy(board)
     # For each shape in the winning order
     for step, shape_idx in enumerate(winning_turn.order, 1):  # start=1 to use 1,2,3 as markers
@@ -239,21 +240,25 @@ def generate_step_boards(board, shapes, winning_turn):
         current_board = np.copy(step_board)
         
         # Clear any completed rows and columns
+        completed_rows = 0
+        completed_columns = 0
         rows, columns = [], []
         for r in range(8):
             if sum(bool(current_board[r][c]) for c in range(8)) == 8:  # using bool() to count any non-zero value
                 rows.append(r)
+                completed_rows += 1
         for c in range(8):
             if sum(bool(current_board[r][c]) for r in range(8)) == 8:
                 columns.append(c)
-                
+                completed_columns += 1
         # Clear them
+        completion_counter[step].append([completed_rows,completed_columns])
         for c in columns:
             for r in range(8):
                 current_board[r][c] = 0
         for r in rows:
             for c in range(8):
                 current_board[r][c] = 0
-    
-    return step_boards
+    print(completion_counter)
+    return completion_counter, step_boards
 

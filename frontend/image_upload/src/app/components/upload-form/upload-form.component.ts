@@ -18,6 +18,8 @@ export class UploadFormComponent {
   fileSize = '';
   uploadStatus: number | undefined;
   gridData: any[][] | null = null;
+  completionCounter: any = null;
+  board: any[][][] | null = null;
   private apiUrl = 'http://localhost:8000/upload/'
 
   constructor(private http: HttpClient) {}
@@ -44,8 +46,10 @@ export class UploadFormComponent {
         next: (response: any) => {
           this.uploadResult = 'Uploaded';
           this.uploadStatus = 200;
-          this.gridData = response[1];
-          
+          this.gridData = response['stepBoards'];
+          this.completionCounter = response['completion_counter'];
+          // this.board = response['board'];
+          console.log(response);
         },
         error: (error: any) => {
           if (error.status === 400) {
