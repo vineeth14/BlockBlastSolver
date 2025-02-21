@@ -137,14 +137,5 @@ def read_shapes_to_grid(image):
 
     return grid
 
-# image_path ='uncompressed_images/IMG_0439.PNG'
-
-
-# board = image_to_grid(image_path)
-# print(board)
-
-# shape_grid = read_shapes_to_grid(image_path)
-# print(shape_grid)
-
 
 

@@ -14,11 +14,11 @@ export class GridComponent {
 
   getColorForCell(value: number): string {
     switch(value) {
-      case 1: return '#4CAF50'; // Green
-      case 2: return '#2196F3'; // Blue
-      case 3: return '#F44336'; // Red
-      case 4: return '#FFEB3B'; // Yellow
-      default: return '#FFFFFF'; // White
+      case 1: return '#2a9d8f'; // Green
+      case 2: return '#264653'; // Blue
+      case 3: return '#e76f51'; // Red
+      case 4: return '#e9c46a'; // Yellow
+      default: return '#edede9'; // White
     }
   }
 }

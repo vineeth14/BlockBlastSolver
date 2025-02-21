@@ -53,4 +53,4 @@
     </div>
 </form>
 
-<app-grid [gridData]="gridData"></app-grid>
+<app-grid *ngIf="gridData" [gridData]="gridData"></app-grid>

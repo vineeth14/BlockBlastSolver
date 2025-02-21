@@ -1,9 +1,10 @@
 /* Base styles */
 * {
     box-sizing: border-box;
-    font-family: "Montserrat", sans-serif;
+    font-family: 'Space Grotesk', system-ui, sans-serif; 
     font-optical-sizing: auto;
     font-style: normal;
+    background-color: #e6e8ec;
 }
 
 /* Form container and its elements */
@@ -12,9 +13,9 @@
     max-width: 29rem;
     padding: 20px;
     flex-flow: column;
-    margin: 100px auto 1rem auto;
-    background-color: #fff;
-    box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.15);
+    margin: 2rem auto 1rem auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
 }
 
 /* Header */
@@ -39,8 +40,9 @@
     font-weight: 500;
     font-size: 0.875rem;
     margin: 0.5rem 0;
-    border-radius: 0.25rem;
+    border-radius: 0.5rem;
     cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .upload-form label:hover {
@@ -150,30 +152,7 @@
     background-color: #0c7ce5;
 }
 
-.grids-container {
-    display: flex;
-    gap: 40px;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin: 20px auto;
-}
 
-.grid {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.grid-row {
-    display: flex;
-    gap: 2px;
-}
-
-.grid-cell {
-    width: 40px;
-    height: 40px;
-    border: 1px solid #ccc;
-}
 
 h3 {
     margin: 10px 0;

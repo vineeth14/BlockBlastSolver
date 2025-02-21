@@ -1,19 +1,57 @@
+.grids-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: center;
+  padding: 2rem;
+}
+
 .grid {
-    display: flex;
-    flex-direction: column;
-    width: 400px; /* 8 cells * 50px per cell */
-    margin: auto;
-  }
-  
-  .grid-row {
-    display: flex;
-  }
-  
-  .grid-cell {
-    border: 1px solid #333;
-    width: 50px;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+  display: flex;
+  flex-direction: column;
+  width: 400px;
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.grid:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.grid h3 {
+  margin: 0 0 1rem 0;
+  color: #2c3e50;
+  font-weight: 600;
+  text-align: center;
+}
+
+.grid-row {
+  display: flex;
+  justify-content: center;
+}
+
+.grid-cell {
+  border: 2px solid #e2e8f0;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.grid-cell:hover {
+  transform: scale(1.05);
+  z-index: 1;
+}
+
+/* Add this to your global styles or component if you want a nice background */
+:host {
+  background-color: #f8fafc;
+  min-height: 100vh;
+  display: block;
+}

@@ -44,8 +44,8 @@ export class UploadFormComponent {
         next: (response: any) => {
           this.uploadResult = 'Uploaded';
           this.uploadStatus = 200;
-          this.gridData = response;
-          console.log(this.gridData);
+          this.gridData = response[1];
+          
         },
         error: (error: any) => {
           if (error.status === 400) {
@@ -72,13 +72,5 @@ export class UploadFormComponent {
     }
   }
 
-  getColorForCell(value: number): string {
-    switch(value) {
-      case 1: return '#4CAF50'; // Green
-      case 2: return '#2196F3'; // Blue
-      case 3: return '#F44336'; // Red
-      case 4: return '#FFEB3B'; // Yellow
-      default: return '#FFFFFF'; // White
-    }
-  }
+  
 }

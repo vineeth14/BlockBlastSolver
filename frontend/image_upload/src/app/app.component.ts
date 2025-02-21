@@ -8,5 +8,5 @@ import { UploadFormComponent } from './components/upload-form/upload-form.compon
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-  title: string = 'Image Upload';
+  title: string = 'Block Blast Solver';
 }

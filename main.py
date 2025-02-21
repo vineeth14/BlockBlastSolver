@@ -30,7 +30,7 @@ def process_image(image):
     stepBoards = generate_step_boards(board, shapes, turn)
     # Store the result and update status.
 
-    return stepBoards
+    return board,stepBoards
 
 
 @app.get("/")
@@ -39,23 +39,10 @@ async def root():
 
 @app.post("/upload/")
 async def create_upload_file(file: UploadFile, background_tasks: BackgroundTasks):
-    # if not file.content_type.startswith('image/'):
-    #     raise HTTPException(status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, detail='Invalid format, file must be an image.')
-    # try:
-    #     image = await file.read()
-    #     task_id = str(uuid.uuid4())
-    #     processing_status[task_id] = {'status': 'processing'}
-    #     background_tasks.add_task(process_image, image, task_id)
-    # except Exception as e:
-    #     print(f"Error processing image: {str(e)}")
-    #     return HTTPException(
-    #         status_code=status.HTTP_400_BAD_REQUEST,
-    #         detail=str(e)
-    #     )
     image = await file.read()
-    stepBoards = process_image(image)
+    board,stepBoards = process_image(image)
     stepBoards_serialized = [step.tolist() for step in stepBoards]
-    return stepBoards_serialized
+    return board.tolist(),stepBoards_serialized
 
 
 

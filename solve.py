@@ -257,18 +257,3 @@ def generate_step_boards(board, shapes, winning_turn):
     
     return step_boards
 
-# image_path = 'uncompressed_images/IMG_0443.PNG'
-
-# grid = read_shapes_to_grid(image_path)
-# # print(grid)
-# shapes = create_shapes(grid)
-
-# # print(board,shapes)
-# # holes = count_holes(board)
-# # print(holes)
-# turn =solve_board(board,shapes)
-# stepBoards = generate_step_boards(board, shapes, turn)
-# print("BOARD \n", board, "\n")
-# for stepBoard in stepBoards:
-#     print(stepBoard, "\n")
- 
