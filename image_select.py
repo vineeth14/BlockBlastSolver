@@ -1,3 +1,5 @@
+  #!/usr/bin/env python3
+
 # Testing OpenCV to see if it can detect shapes in the uploaded image
 #Split image into 2 parts
 # 1.Convert to grayscale
@@ -7,15 +9,13 @@ from PIL import Image, ImageEnhance, ImageFilter
 import numpy as np 
 import cv2
 import matplotlib.pyplot as plt
+import io
 
 
+# image_path ='uncompressed_images/IMG_0437.PNG'
 
-image_path ='uncompressed_images/IMG_0437.PNG'
 
-
-def image_to_grid(image_path, grid_size=(8,8)):
-
-    image = Image.open(image_path) 
+def image_to_grid(image, grid_size=(8,8)):
 
     grayscaleImage = image.convert('L')
     cropGrid = (50, 600, 1120, 1650)
@@ -47,10 +47,12 @@ def check_color(measured, reference, allowed_deviation):
     return flag
 
 def read_shapes_to_grid(image):
-    image = Image.open(image_path)
+    # if not isinstance(image, Image.Image):
+    #     image = Image.fromarray(image)
+    
+    
     # Convert the supplied image to a PIL Image if it's not already one
-    if not isinstance(image, Image.Image):
-        image = Image.fromarray(image)
+    
     
 
     # Define the region boundaries
@@ -75,17 +77,17 @@ def read_shapes_to_grid(image):
     # Defines multiple points to sample within each grid cell
 
     sampleOffsets = [
-        (0, 0),     # Center
-        (5, 0),     # Near right
-        (-5, 0),    # Near left
-        (0, 5),     # Near down
-        (0, -5),    # Near up
-        (15, 0),    # Far right
-        (-15, 0),   # Far left
-        (0, 15),    # Far down
-        (0, -15),   # Far up
-        (0, 20),    # Extra far down
-        (0, -20),   # Extra far up    
+        (0, 0),      # Center
+        (5, 0),      # Near right
+        (-5, 0),     # Near left
+        (0, 5),      # Near down
+        (0, -5),     # Near up
+        (15, 0),     # Far right
+        (-15, 0),    # Far left
+        (0, 15),     # Far down
+        (0, -15),    # Far up
+        (0, 20),     # Extra far down
+        (0, -20),    # Extra far up     
     ]
       
     # Initialize the grid with zeros (with a small extra buffer)
@@ -135,14 +137,14 @@ def read_shapes_to_grid(image):
 
     return grid
 
-image_path ='uncompressed_images/IMG_0437.PNG'
+# image_path ='uncompressed_images/IMG_0439.PNG'
 
 
-board = image_to_grid(image_path)
-print(board)
+# board = image_to_grid(image_path)
+# print(board)
 
-shape_grid = read_shapes_to_grid(image_path)
-print(shape_grid)
+# shape_grid = read_shapes_to_grid(image_path)
+# print(shape_grid)
 
 
 

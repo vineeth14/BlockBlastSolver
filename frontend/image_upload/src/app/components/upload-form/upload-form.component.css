@@ -149,3 +149,33 @@
     height: 100%;
     background-color: #0c7ce5;
 }
+
+.grids-container {
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 20px auto;
+}
+
+.grid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.grid-row {
+    display: flex;
+    gap: 2px;
+}
+
+.grid-cell {
+    width: 40px;
+    height: 40px;
+    border: 1px solid #ccc;
+}
+
+h3 {
+    margin: 10px 0;
+    text-align: center;
+}
