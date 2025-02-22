@@ -26,7 +26,6 @@ def create_shapes(grid):
                                 q.append(Block(nr,nc))
                                 shape.segment.append(Block(nr,nc))
                 shape.initialize()
-
     return shapes
 
 def count_holes(board):

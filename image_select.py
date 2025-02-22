@@ -52,8 +52,6 @@ def read_shapes_to_grid(image):
     
     
     # Convert the supplied image to a PIL Image if it's not already one
-    
-    
 
     # Define the region boundaries
     x_min = 100
