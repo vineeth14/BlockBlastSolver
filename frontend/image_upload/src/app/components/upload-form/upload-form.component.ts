@@ -19,8 +19,9 @@ export class UploadFormComponent {
   uploadStatus: number | undefined;
   gridData: any[][] | null = null;
   completionCounter: any = null;
-  board: any[][][] | null = null;
+  gameBoard: any[][] | null = null;
   isLoading = false;
+  shapeGrid: any[][] | null = null;
   private apiUrl = 'http://localhost:8000/upload/';
 
   constructor(private http: HttpClient) {}
@@ -50,8 +51,9 @@ export class UploadFormComponent {
           this.uploadResult = 'Uploaded';
           this.uploadStatus = 200;
           this.gridData = response['stepBoards'];
-          this.gridData?.unshift(response['board']);
+          this.gameBoard = response['board']
           this.completionCounter = response['completion_counter'];
+          this.shapeGrid = response['shape_grid']
           console.log(response);
           this.isLoading = false;
         },

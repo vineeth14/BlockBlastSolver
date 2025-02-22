@@ -1,16 +1,21 @@
 .grids-container {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 2rem;
-  justify-content: center;
   padding: 2rem;
-  background-color: #EEEEEE;
+  background-color: #eeeeee;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scroll-behavior: smooth;
 }
 
 .grid {
+  flex: 0 0 auto;
+  width: 300px;
   display: flex;
   flex-direction: column;
-  width: 400px;
+  align-items: center;
   background: white;
   padding: 1.5rem;
   border-radius: 12px;
@@ -28,6 +33,8 @@
   color: #2c3e50;
   font-weight: 600;
   text-align: center;
+  font-size: 1.2rem;
+  line-height: 1.5;
 }
 
 .grid-row {
@@ -36,9 +43,9 @@
 }
 
 .grid-cell {
-  border: 2px solid #e2e8f0;
-  width: 50px;
-  height: 50px;
+  border: 1px solid #e2e8f0;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -52,7 +59,7 @@
 
 /* Add this to your global styles or component if you want a nice background */
 :host {
-  background-color: #f8fafc;
+  background-color: #eeeeee;
   min-height: 100vh;
   display: block;
 }

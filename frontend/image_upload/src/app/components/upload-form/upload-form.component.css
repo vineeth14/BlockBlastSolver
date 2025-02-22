@@ -6,6 +6,22 @@
     font-style: normal;
 }
 
+:host {
+    display: block;
+    background-color: #eeeeee;
+    min-height: 100vh;
+    padding: 2rem;
+}
+
+/* Main container for upload form and game board */
+.main-container {
+    display: flex;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto 2rem auto;
+    align-items: flex-start;
+}
+
 /* Form container and its elements */
 .upload-form {
     display: flex;
@@ -15,6 +31,29 @@
     margin: 2rem auto 1rem auto;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     border-radius: 12px;
+    background-color: #f5f5f5;
+}
+
+/* Game board container */
+.game-board-container {
+    flex: 0 0 auto;
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Solution steps container */
+.solution-steps-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 /* Header */
@@ -42,6 +81,7 @@
     border-radius: 0.5rem;
     cursor: pointer;
     transition: background-color 0.2s ease, border-color 0.2s ease;
+
 }
 
 .upload-form label:hover {
@@ -194,5 +234,54 @@ h3 {
     }
     100% {
         transform: rotate(360deg);
+    }
+}
+
+.grids-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    padding: 2rem;
+}
+
+.grids-wrapper {
+    width: 100%;
+    margin: 0 auto;
+    padding: 0;
+    overflow: hidden;
+}
+
+/* Customize scrollbar appearance */
+.grids-container::-webkit-scrollbar {
+    height: 8px;
+}
+
+.grids-container::-webkit-scrollbar-track {
+    background: #eeeeee;
+    border-radius: 4px;
+}
+
+.grids-container::-webkit-scrollbar-thumb {
+    background: #eeeeee;
+    border-radius: 4px;
+}
+
+.grids-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .main-container {
+        flex-direction: column;
+    }
+    
+    .upload-form {
+        flex: none;
+        width: 100%;
+    }
+    
+    .solution-steps-container {
+        padding: 1rem;
     }
 }

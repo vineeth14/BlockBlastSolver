@@ -22,7 +22,7 @@ def create_shapes(grid):
                         for dr,dc in directions:
                             nr, nc = dr+block.row, dc+block.col
                             if nr in range(grid.shape[0]) and nc in range(grid.shape[1]) and grid[nr][nc] == 1:
-                                grid[nr][nc] = 0
+                                grid[nr][nc] = 2
                                 q.append(Block(nr,nc))
                                 shape.segment.append(Block(nr,nc))
                 shape.initialize()

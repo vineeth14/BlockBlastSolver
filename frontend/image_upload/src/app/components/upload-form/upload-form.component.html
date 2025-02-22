@@ -53,7 +53,23 @@
     </div>
 </form>
 
-<app-grid *ngIf="gridData" [gridData]="gridData" [completionCounter]="completionCounter"></app-grid>
+<div class="grids-wrapper">
+    <div class="grids-container">
+        <app-grid *ngIf="gameBoard && gameBoard.length > 0" 
+                 [grid]="gameBoard"
+                 [title]="'Game Board'">
+        </app-grid>
+        
+        <ng-container *ngIf="gridData && gridData.length > 0">
+            <app-grid *ngFor="let board of gridData; let i = index"
+                     [grid]="board"
+                     [title]="'Step ' + (i + 1)"
+                     [completedRows]="completionCounter[i + 1]?.[0]?.[0]"
+                     [completedColumns]="completionCounter[i + 1]?.[0]?.[1]">
+            </app-grid>
+        </ng-container>
+    </div>
+</div>
 
 <div *ngIf='isLoading' class='overlay'>
   <div class='spinner-container'>
