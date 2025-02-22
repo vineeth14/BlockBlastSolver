@@ -8,11 +8,11 @@ import { GridComponent } from '../grid/grid.component';
   standalone: true,
   imports: [CommonModule, HttpClientModule, GridComponent],
   templateUrl: './upload-form.component.html',
-  styleUrl: './upload-form.component.css'
+  styleUrls: ['./upload-form.component.css']
 })
 export class UploadFormComponent {
   outputBoxVisible = false;
-  progress = `0%`;
+  progress = '0%';
   uploadResult = '';
   fileName = '';
   fileSize = '';
@@ -20,17 +20,20 @@ export class UploadFormComponent {
   gridData: any[][] | null = null;
   completionCounter: any = null;
   board: any[][][] | null = null;
-  private apiUrl = 'http://localhost:8000/upload/'
+  isLoading = false;
+  private apiUrl = 'http://localhost:8000/upload/';
 
   constructor(private http: HttpClient) {}
 
   onFileSelected(event: any, inputFile: File | null) {
     this.outputBoxVisible = false;
-    this.progress = `0%`;
+    this.progress = '0%';
     this.uploadResult = '';
     this.fileName = '';
     this.fileSize = '';
     this.uploadStatus = undefined;
+    this.isLoading = true;
+
     const file: File = inputFile || event.target.files[0];
 
     if (file) {
@@ -49,16 +52,17 @@ export class UploadFormComponent {
           this.gridData = response['stepBoards'];
           this.gridData?.unshift(response['board']);
           this.completionCounter = response['completion_counter'];
-          // this.board = response['board'];
           console.log(response);
+          this.isLoading = false;
         },
         error: (error: any) => {
           if (error.status === 400) {
             this.uploadResult = error.error.message;
-          } else{
+          } else {
             this.uploadResult = 'File upload failed!';
           }
           this.uploadStatus = error.status;
+          this.isLoading = false;
         }
       });
     }
@@ -72,10 +76,7 @@ export class UploadFormComponent {
   handleDrop(event: DragEvent) {
     event.preventDefault();
     if (event.dataTransfer) {
-      const file: File = event.dataTransfer.files[0];
       this.onFileSelected(event, event.dataTransfer.files[0]);
     }
   }
-
-  
 }

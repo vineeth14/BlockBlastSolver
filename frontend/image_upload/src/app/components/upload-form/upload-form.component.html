@@ -54,3 +54,10 @@
 </form>
 
 <app-grid *ngIf="gridData" [gridData]="gridData" [completionCounter]="completionCounter"></app-grid>
+
+<div *ngIf='isLoading' class='overlay'>
+  <div class='spinner-container'>
+    <div class='spinner'></div>
+    <p>Board is being solved…</p>
+  </div>
+</div>
