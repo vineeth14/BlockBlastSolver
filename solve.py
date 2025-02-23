@@ -142,16 +142,6 @@ def solve_board(board,shapes):
                         
                         #Board is now in state after piece is placed and completed row and column are removed
                         
-                        #Scoring partially completed rows/columns
-                        #Rewarding bc partially completed rows are desirable
-                        # coeff = 2
-                        # for r in range(8):
-                        #     filled = sum(tempBoard[r][c] for c in range(8)) * coeff
-                        #     score += filled 
-                        # for c in range(8):
-                        #     filled = sum(tempBoard[r][c] for r in range(8)) * coeff
-                        #     score += filled 
-
                         #Penalize isolated blocks
                         coeff = 6
                         directions = [[-1,0],[0,1],[1,0],[0,-1]]
@@ -178,8 +168,8 @@ def solve_board(board,shapes):
                         # Storing positions of shape with score
                         newTurn.positions[number] = Block(row_idx, col_idx, score)
                         validPlacements.append(newTurn)
-                # Done processing the board with all 3 shapes and permutations. 
 
+                # Done processing the board with all 3 shapes and permutations. 
                 if len(validPlacements) == 0 :
                     # No valid Moves
                     continue
@@ -189,7 +179,7 @@ def solve_board(board,shapes):
                     if fillCount>15: #Could change this to make it faster (need to test)
                         acceptedMoves.append(placement)
                     else:
-                        # Skipping boards(valid placements) with same score because when we have a relatively emtpy board, 
+                        # Skipping boards(valid placements) with same score because when we have a relatively empty board, 
                         # we don't need to consider every valid placement with the same score.
                         skip = False
                         for seen in seenScore:

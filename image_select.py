@@ -1,18 +1,10 @@
   #!/usr/bin/env python3
 
-# Testing OpenCV to see if it can detect shapes in the uploaded image
-#Split image into 2 parts
-# 1.Convert to grayscale
-# 2.Apply thresholding to convert the image to binary
-
 from PIL import Image, ImageEnhance, ImageFilter
 import numpy as np 
 import cv2
 import matplotlib.pyplot as plt
 import io
-
-
-# image_path ='uncompressed_images/IMG_0437.PNG'
 
 
 def image_to_grid(image, grid_size=(8,8)):
@@ -47,13 +39,6 @@ def check_color(measured, reference, allowed_deviation):
     return flag
 
 def read_shapes_to_grid(image):
-    # if not isinstance(image, Image.Image):
-    #     image = Image.fromarray(image)
-    
-    
-    # Convert the supplied image to a PIL Image if it's not already one
-    
-    
 
     # Define the region boundaries
     x_min = 100
