@@ -14,9 +14,10 @@ import {
   setAngularAppEngineManifest,
   setAngularAppManifest,
   withAppShell
-} from "./chunk-O3M6X5EB.js";
+} from "./chunk-VD2GKPCJ.js";
+import "./chunk-BIXN34VP.js";
+import "./chunk-UJA52W4A.js";
 import "./chunk-7K2GJIEI.js";
-import "./chunk-WGHIGEYG.js";
 import "./chunk-FZHFUH5J.js";
 import "./chunk-RSDZCMNU.js";
 import "./chunk-YAGPW5AS.js";

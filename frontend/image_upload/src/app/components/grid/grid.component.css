@@ -1,3 +1,23 @@
+@keyframes dropIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 .grids-container {
   display: flex;
   flex-wrap: nowrap;
@@ -22,6 +42,7 @@
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease;
+  animation: fadeIn 0.5s ease-in forwards;
 }
 
 .grid:hover {
@@ -54,6 +75,9 @@
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
+  animation: dropIn 2s ease forwards, fadeIn 2s ease-in forwards;
+  /* animation-delay: 0s, 0.5s;gi */
+  opacity: 0;
 }
 
 .grid-cell:hover {
