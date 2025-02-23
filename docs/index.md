@@ -200,9 +200,9 @@ I'm happy with the results, and I had a lot of fun building this. It was a great
 ![Final Results!](pictures/final_results.gif)
 
 ### Future Improvements
-- [ ] Enhanced pattern recognition
-- [ ] Special piece handling
-- [ ] Improved Scoring Methodology
+[ ] Enhanced pattern recognition
+[ ] Special piece handling
+[ ] Improved Scoring Methodology
 
 [View Project on GitHub](https://github.com/vineeth14/BlockBlastSolver)
 
