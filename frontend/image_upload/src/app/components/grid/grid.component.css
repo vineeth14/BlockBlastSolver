@@ -1,23 +1,24 @@
 .grids-container {
   display: flex;
   flex-wrap: nowrap;
-  gap: 2rem;
-  padding: 2rem;
-  background-color: #eeeeee;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background-color: var(--background-color);
   overflow-x: auto;
+  width: 100%;
   -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
-  scroll-behavior: smooth;
 }
 
 .grid {
-  flex: 0 0 auto;
-  width: 300px;
+  flex: 0 0 250px;
+  min-width: 200px;
+  margin-bottom: var(--spacing-md);
+  max-width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   background: white;
-  padding: 1.5rem;
+  padding: 1rem;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease;
@@ -40,12 +41,15 @@
 .grid-row {
   display: flex;
   justify-content: center;
+  width: 100%;
 }
 
 .grid-cell {
   border: 1px solid #e2e8f0;
-  width: 40px;
-  height: 40px;
+  flex: 1;
+  aspect-ratio: 1;
+  max-width: 40px;
+  max-height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;

@@ -22,6 +22,7 @@ export class UploadFormComponent {
   gameBoard: any[][] | null = null;
   isLoading = false;
   shapeGrid: any[][] | null = null;
+  imagePreview: string | null = null;
   private apiUrl = 'http://localhost:8000/upload/';
 
   constructor(private http: HttpClient) {}
@@ -34,6 +35,7 @@ export class UploadFormComponent {
     this.fileSize = '';
     this.uploadStatus = undefined;
     this.isLoading = true;
+    this.imagePreview = null;
 
     const file: File = inputFile || event.target.files[0];
 
@@ -41,6 +43,15 @@ export class UploadFormComponent {
       this.fileName = file.name;
       this.fileSize = `${(file.size / 1024).toFixed(2)} KB`;
       this.outputBoxVisible = true;
+
+      // Create image preview
+      if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = (e: any) => {
+          this.imagePreview = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
 
       const formData = new FormData();
       formData.append('file', file);
