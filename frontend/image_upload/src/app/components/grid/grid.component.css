@@ -76,7 +76,6 @@
   justify-content: center;
   transition: all 0.2s ease;
   animation: dropIn 2s ease forwards, fadeIn 2s ease-in forwards;
-  /* animation-delay: 0s, 0.5s;gi */
   opacity: 0;
 }
 

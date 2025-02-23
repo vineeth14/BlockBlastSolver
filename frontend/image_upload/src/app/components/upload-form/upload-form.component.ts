@@ -12,7 +12,6 @@ import { GridComponent } from '../grid/grid.component';
 })
 export class UploadFormComponent {
   outputBoxVisible = false;
-  progress = '0%';
   uploadResult = '';
   fileName = '';
   fileSize = '';
@@ -21,7 +20,6 @@ export class UploadFormComponent {
   completionCounter: any = null;
   gameBoard: any[][] | null = null;
   isLoading = false;
-  shapeGrid: any[][] | null = null;
   imagePreview: string | null = null;
   private apiUrl = 'http://localhost:8000/upload/';
 
@@ -29,7 +27,6 @@ export class UploadFormComponent {
 
   onFileSelected(event: any, inputFile: File | null) {
     this.outputBoxVisible = false;
-    this.progress = '0%';
     this.uploadResult = '';
     this.fileName = '';
     this.fileSize = '';
@@ -64,7 +61,6 @@ export class UploadFormComponent {
           this.gridData = response['stepBoards'];
           this.gameBoard = response['board']
           this.completionCounter = response['completion_counter'];
-          this.shapeGrid = response['shape_grid']
           console.log(response);
           this.isLoading = false;
         },
