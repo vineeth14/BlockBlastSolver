@@ -192,6 +192,12 @@ So, I added the below optimization:
 **Over Optimization**:
 Something I ran into when trying to optimize the scoring methodology was increasing the score for partially completed rows/columns. This led to over-rewarding boards that have many filled cells even when they are not close to becoming complete. This can mislead the solver into choosing moves that rack up a lot of temporary points without actually progressing toward clearing rows/columns.
 
+### Final Thoughts
+I'm happy with the results, and I had a lot of fun building this. It was a great to learn about image processing and game logic. 
+
+
+
+![Final Results!](pictures/final_results.gif)
 
 ### Future Improvements
 - [ ] Enhanced pattern recognition
