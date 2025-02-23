@@ -1,1 +1,12 @@
 /* You can add global styles to this file, and also import other style files */
+
+:root {
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 1rem;
+  --spacing-md: 2rem;
+  --spacing-lg: 2.5rem;
+  --container-max-width: 60rem;
+  --background-color: #eeeeee;
+  --card-bg-color: #f5f5f5;
+  --primary-color: #0c7ce5;
+}

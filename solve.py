@@ -22,7 +22,7 @@ def create_shapes(grid):
                         for dr,dc in directions:
                             nr, nc = dr+block.row, dc+block.col
                             if nr in range(grid.shape[0]) and nc in range(grid.shape[1]) and grid[nr][nc] == 1:
-                                grid[nr][nc] = 0
+                                grid[nr][nc] = 2
                                 q.append(Block(nr,nc))
                                 shape.segment.append(Block(nr,nc))
                 shape.initialize()
@@ -142,16 +142,6 @@ def solve_board(board,shapes):
                         
                         #Board is now in state after piece is placed and completed row and column are removed
                         
-                        #Scoring partially completed rows/columns
-                        #Rewarding bc partially completed rows are desirable
-                        # coeff = 2
-                        # for r in range(8):
-                        #     filled = sum(tempBoard[r][c] for c in range(8)) * coeff
-                        #     score += filled 
-                        # for c in range(8):
-                        #     filled = sum(tempBoard[r][c] for r in range(8)) * coeff
-                        #     score += filled 
-
                         #Penalize isolated blocks
                         coeff = 6
                         directions = [[-1,0],[0,1],[1,0],[0,-1]]
@@ -178,8 +168,8 @@ def solve_board(board,shapes):
                         # Storing positions of shape with score
                         newTurn.positions[number] = Block(row_idx, col_idx, score)
                         validPlacements.append(newTurn)
-                # Done processing the board with all 3 shapes and permutations. 
 
+                # Done processing the board with all 3 shapes and permutations. 
                 if len(validPlacements) == 0 :
                     # No valid Moves
                     continue
@@ -189,7 +179,7 @@ def solve_board(board,shapes):
                     if fillCount>15: #Could change this to make it faster (need to test)
                         acceptedMoves.append(placement)
                     else:
-                        # Skipping boards(valid placements) with same score because when we have a relatively emtpy board, 
+                        # Skipping boards(valid placements) with same score because when we have a relatively empty board, 
                         # we don't need to consider every valid placement with the same score.
                         skip = False
                         for seen in seenScore:
@@ -224,6 +214,7 @@ def solve_board(board,shapes):
                         
 def generate_step_boards(board, shapes, winning_turn):
     step_boards = []
+    completion_counter = {1:[],2:[],3:[]}
     current_board = np.copy(board)
     # For each shape in the winning order
     for step, shape_idx in enumerate(winning_turn.order, 1):  # start=1 to use 1,2,3 as markers
@@ -239,36 +230,24 @@ def generate_step_boards(board, shapes, winning_turn):
         current_board = np.copy(step_board)
         
         # Clear any completed rows and columns
+        completed_rows = 0
+        completed_columns = 0
         rows, columns = [], []
         for r in range(8):
             if sum(bool(current_board[r][c]) for c in range(8)) == 8:  # using bool() to count any non-zero value
                 rows.append(r)
+                completed_rows += 1
         for c in range(8):
             if sum(bool(current_board[r][c]) for r in range(8)) == 8:
                 columns.append(c)
-                
+                completed_columns += 1
         # Clear them
+        completion_counter[step].append([completed_rows,completed_columns])
         for c in columns:
             for r in range(8):
                 current_board[r][c] = 0
         for r in rows:
             for c in range(8):
                 current_board[r][c] = 0
-    
-    return step_boards
+    return completion_counter, step_boards
 
-# image_path = 'uncompressed_images/IMG_0443.PNG'
-
-# grid = read_shapes_to_grid(image_path)
-# # print(grid)
-# shapes = create_shapes(grid)
-
-# # print(board,shapes)
-# # holes = count_holes(board)
-# # print(holes)
-# turn =solve_board(board,shapes)
-# stepBoards = generate_step_boards(board, shapes, turn)
-# print("BOARD \n", board, "\n")
-# for stepBoard in stepBoards:
-#     print(stepBoard, "\n")
- 

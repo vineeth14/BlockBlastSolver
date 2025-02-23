@@ -1,11 +1,16 @@
-<div class='grids-container' *ngIf='gridData'>
-  <div class='grid' *ngFor='let board of gridData; let i = index'>
-    <h3>Step {{i + 1}}</h3>
-    <div class='grid-row' *ngFor='let j of boardSize'>
-      <div class='grid-cell' 
-           *ngFor='let k of boardSize'
-           [style.background-color]="getColorForCell(board[j][k])">
-      </div>
+<div class='grid' *ngIf='grid'>
+  <h3>
+    {{ title }}
+    <ng-container *ngIf='completedRows !== null || completedColumns !== null'>
+      <br>
+      <ng-container *ngIf='completedRows !== null'>Completed Rows: {{ completedRows }}<br></ng-container>
+      <ng-container *ngIf='completedColumns !== null'>Completed Columns: {{ completedColumns }}</ng-container>
+    </ng-container>
+  </h3>
+  <div class='grid-row' *ngFor='let i of rowIndices'>
+    <div class='grid-cell' 
+         *ngFor='let j of columnIndices'
+         [style.background-color]="getColorForCell(grid[i][j])">
     </div>
   </div>
 </div>

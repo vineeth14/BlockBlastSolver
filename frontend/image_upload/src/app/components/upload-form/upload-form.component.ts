@@ -8,33 +8,47 @@ import { GridComponent } from '../grid/grid.component';
   standalone: true,
   imports: [CommonModule, HttpClientModule, GridComponent],
   templateUrl: './upload-form.component.html',
-  styleUrl: './upload-form.component.css'
+  styleUrls: ['./upload-form.component.css']
 })
 export class UploadFormComponent {
   outputBoxVisible = false;
-  progress = `0%`;
   uploadResult = '';
   fileName = '';
   fileSize = '';
   uploadStatus: number | undefined;
   gridData: any[][] | null = null;
-  private apiUrl = 'http://localhost:8000/upload/'
+  completionCounter: any = null;
+  gameBoard: any[][] | null = null;
+  isLoading = false;
+  imagePreview: string | null = null;
+  private apiUrl = 'http://localhost:8000/upload/';
 
   constructor(private http: HttpClient) {}
 
   onFileSelected(event: any, inputFile: File | null) {
     this.outputBoxVisible = false;
-    this.progress = `0%`;
     this.uploadResult = '';
     this.fileName = '';
     this.fileSize = '';
     this.uploadStatus = undefined;
+    this.isLoading = true;
+    this.imagePreview = null;
+
     const file: File = inputFile || event.target.files[0];
 
     if (file) {
       this.fileName = file.name;
       this.fileSize = `${(file.size / 1024).toFixed(2)} KB`;
       this.outputBoxVisible = true;
+
+      // Create image preview
+      if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = (e: any) => {
+          this.imagePreview = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
 
       const formData = new FormData();
       formData.append('file', file);
@@ -44,16 +58,20 @@ export class UploadFormComponent {
         next: (response: any) => {
           this.uploadResult = 'Uploaded';
           this.uploadStatus = 200;
-          this.gridData = response;
-          console.log(this.gridData);
+          this.gridData = response['stepBoards'];
+          this.gameBoard = response['board']
+          this.completionCounter = response['completion_counter'];
+          console.log(response);
+          this.isLoading = false;
         },
         error: (error: any) => {
           if (error.status === 400) {
             this.uploadResult = error.error.message;
-          } else{
+          } else {
             this.uploadResult = 'File upload failed!';
           }
           this.uploadStatus = error.status;
+          this.isLoading = false;
         }
       });
     }
@@ -67,18 +85,7 @@ export class UploadFormComponent {
   handleDrop(event: DragEvent) {
     event.preventDefault();
     if (event.dataTransfer) {
-      const file: File = event.dataTransfer.files[0];
       this.onFileSelected(event, event.dataTransfer.files[0]);
-    }
-  }
-
-  getColorForCell(value: number): string {
-    switch(value) {
-      case 1: return '#4CAF50'; // Green
-      case 2: return '#2196F3'; // Blue
-      case 3: return '#F44336'; // Red
-      case 4: return '#FFEB3B'; // Yellow
-      default: return '#FFFFFF'; // White
     }
   }
 }

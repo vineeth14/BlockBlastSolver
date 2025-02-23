@@ -1,56 +1,88 @@
-<form class="upload-form">
-    <!-- Header -->
-    <h1>Upload File</h1>
+<!-- Upload Container -->
+<div class="upload-container">
+    <form class="upload-form">
+        <!-- Header -->
+        <h3>Upload File</h3>
 
-    <!-- File Upload Area -->
-    <label for="file">
-        <i class="ph ph-upload"></i>
-        <span>
-            Drag & drop or
-            <span>browse</span>
-            your files
-        </span>
-    </label>
+        <!-- File Upload Area -->
+        <label for="file">
+            <i class="ph ph-upload"></i>
+            <span>
+                Drag & drop or
+                <span>browse</span>
+                your files
+            </span>
+        </label>
 
-    <!-- Hidden File Input -->
-    <input
-        id="file"
-        type="file"
-        name="file"
-        (change)="onFileSelected($event, null)"
-        (dragover)="handleDragOver($event)"
-        (drop)="handleDrop($event)"
-    />
+        <!-- Hidden File Input -->
+        <input
+            id="file"
+            type="file"
+            name="file"
+            (change)="onFileSelected($event, null)"
+            (dragover)="handleDragOver($event)"
+            (drop)="handleDrop($event)"
+        />
 
-    <!-- Upload Result Area -->
-    <div 
-        class="result" 
-        [style.display]="outputBoxVisible ? 'flex' : 'none'"
-        role="status"
-        aria-live="polite"
-    >
-        <i class="ph ph-file"></i>
-        
-        <div class="file-details">
-            <span class="file-name">{{ fileName }}</span>
-            <ng-container *ngIf="uploadStatus === 200 || uploadStatus === undefined">
-                <span class="file-size">{{ fileSize }}</span>
-            </ng-container>
-        </div>
-
+        <!-- Upload Result Area -->
         <div 
-            class="upload-result" 
-            [style.display]="uploadStatus ? 'flex' : 'none'"
+            class="result" 
+            [style.display]="outputBoxVisible ? 'flex' : 'none'"
+            role="status"
+            aria-live="polite"
         >
-            <span>{{ uploadResult }}</span>
-            <ng-container *ngIf="uploadStatus === 200; else error">
-                <i class="ph ph-check-circle"></i>
-            </ng-container>
-            <ng-template #error>
-                <i class="ph ph-x-circle"></i>
-            </ng-template>
-        </div>
-    </div>
-</form>
+            <i class="ph ph-file"></i>
+            
+            <div class="file-details">
+                <span class="file-name">{{ fileName }}</span>
+                <ng-container *ngIf="uploadStatus === 200 || uploadStatus === undefined">
+                    <span class="file-size">{{ fileSize }}</span>
+                </ng-container>
+            </div>
 
-<app-grid [gridData]="gridData"></app-grid>
+            <div 
+                class="upload-result" 
+                [style.display]="uploadStatus ? 'flex' : 'none'"
+            >
+                <span>{{ uploadResult }}</span>
+                <ng-container *ngIf="uploadStatus === 200; else error">
+                    <i class="ph ph-check-circle"></i>
+                </ng-container>
+                <ng-template #error>
+                    <i class="ph ph-x-circle"></i>
+                </ng-template>
+            </div>
+        </div>
+    </form>
+
+    <!-- Image Preview -->
+    <div class="image-preview" *ngIf="imagePreview">
+        <h3>Uploaded Board</h3>
+        <img [src]="imagePreview" alt="Preview" />
+    </div>
+</div>
+
+<div class="grids-wrapper">
+    <div class="grids-container">
+        <app-grid *ngIf="gameBoard && gameBoard.length > 0" 
+                 [grid]="gameBoard"
+                 [title]="'Game Board'">
+        </app-grid>
+        
+        <ng-container *ngIf="gridData && gridData.length > 0">
+            <app-grid *ngFor="let board of gridData; let i = index"
+                     [grid]="board"
+                     [title]="'Step ' + (i + 1)"
+                     [completedRows]="completionCounter[i + 1]?.[0]?.[0]"
+                     [completedColumns]="completionCounter[i + 1]?.[0]?.[1]">
+            </app-grid>
+        </ng-container>
+    </div>
+</div>
+
+<div *ngIf='isLoading' class='overlay'>
+  <div class='spinner-container'>
+    <div class='spinner'></div>
+    <p>Solving...</p>
+  </div>
+</div>
