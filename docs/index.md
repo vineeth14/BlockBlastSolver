@@ -35,7 +35,7 @@ title: Block Blast Solver
 
 ## Introduction
 
-This project started with a simple obsession—[Block Blast](https://apps.apple.com/us/app/block-blast/id1617391485). The satisfaction of beating my friends' high scores, when we were in a friendly competition to see who could get the highest score got me thinking about whether I could build a solver that could give me the best possible moves.
+This project started with a simple obsession—[Block Blast](https://apps.apple.com/us/app/block-blast/id1617391485). The satisfaction of beating my friends' high scores while we were in a friendly competition to see who could get the highest score got me thinking about whether I could build a solver that could give me the best possible moves.
 
 <blockquote class="highlight">
 Block Blast is a Tetris inspired puzzle game where you drag and drop the pieces onto a 8x8 board and can clear both rows (like in Tetris) and columns; the pieces don't fall, you are presented with three at a time and drag them onto the board. You lose in a fashion similar to Tetris -- when there is no longer room to place a piece.
@@ -51,13 +51,13 @@ The development process came with several interesting challenges:
 
 | Challenge | Description |
 |-----------|-------------|
-| Game State Recognition | Block Blast does not have a defined set of shapes like Tetris. Capturing and understanding the game state accurately, including different block colors and patterns. |
+| Game State Recognition | Unlike Tetris, Block Blast does not have a defined set of shapes. Capturing and understanding the game state accurately, including different block colors and patterns. |
 | Game Logic | Block Blast has a unique game logic that requires a custom approach to solving the game. |
 | Performance Optimization | Finding the right balance between speed and accuracy while managing computational resources. |
 
 ## Game State Recognition
 
-The first challenge was to capture the game state accurately. This was challenging because the game does not have a defined set of shapes or colors used. I tried a few approaches:
+The first challenge was to capture the game state accurately. This was challenging because the game does not use a defined set of shapes or colors. I tried a few approaches:
 
 ### Goal
 > Finding a simple solution to convert the uploaded image of the game board and the blocks within it to a 2D array of 0s and 1s respectively.
@@ -111,7 +111,7 @@ The first challenge was to capture the game state accurately. This was challengi
 ### Approach Evolution
 
 #### Why the first method failed for game pieces:
-- Inaccurate results as shapes cannot be predefined as they are randomly generated.
+- The results were inaccurate as shapes cannot be predefined as they are randomly generated.
 - Background color interference made simple image processing unreliable
 - Inconsistent results as shapes can be different shades of blue and because the background color is a shade of blue, it was difficult to do simple image processing and get a consistent binary image.
 
@@ -119,13 +119,13 @@ The first challenge was to capture the game state accurately. This was challengi
 
 Attempted using HSV ranges to extract the shapes from the cropped images:
 
-- This doesn't work because I suspect that some of the colors used are randomly generated or the number of colors used is larger than I cared to manually identify.
+- This didn't work because I suspect that some of the colors used are randomly generated or the number of colors was too large to manually identify.
 - So hard coding the HSV color values wouldn't work consistently.
 
 ### Final Approach: Color Detection
 
 After trying the above approaches, I decided to develop a color detection system to extract the shapes from the cropped images that would work consistently.
-This proved to be quite challenging as it was difficult to get consistent results with this approach. It was easy to find the shape, but accurately obtaining the correct number of blocks of the shape was extremely inconsistent due to factors like image quality and resolution. I applied a number of techniques to improve the accuracy of the detection.
+This proved to be quite challenging because it was tricky to get consistent results. It was easy to find the shape, but accurately obtaining the correct number of blocks of the shape was extremely inconsistent due to factors like image quality and resolution. I applied a number of techniques to improve the accuracy of the detection.
 
 My color detection system consisted of 3 main steps:
 
@@ -158,7 +158,7 @@ Now that we have detected the game board and the game pieces, we can start to th
 
 ### Does the game make us lose on purpose?
 
-I say this because at the beginning of a game, we can very clearly see that the proposed pieces are strangely perfect—they are exactly the pieces needed to complete a row or a column. So, the game is clearly aware of the pieces we need, and at the start of the game at least, it helps us. This was an interesting observation I noticed.
+At the beginning of a game, the proposed pieces are strangely exactly what is needed to complete a row or column, which suggests the game is aware of the pieces we need. So, the game is clearly aware of the pieces we need, and at the start of the game at least, it helps us. This was an interesting observation I noticed.
 
 
 ### Solution Evolution
@@ -193,16 +193,16 @@ So, I added the below optimization:
 Something I ran into when trying to optimize the scoring methodology was increasing the score for partially completed rows/columns. This led to over-rewarding boards that have many filled cells even when they are not close to becoming complete. This can mislead the solver into choosing moves that rack up a lot of temporary points without actually progressing toward clearing rows/columns.
 
 ### Final Thoughts
-I'm happy with the results, and I had a lot of fun building this. It was a great to learn about image processing and game logic. 
+I'm happy with the results, and I had a lot of fun building this. It was great to learn about image processing and game logic. 
 
 
 
 ![Final Results!](pictures/final_results.gif)
 
 ### Future Improvements
-[ ] Enhanced pattern recognition
-[ ] Special piece handling
-[ ] Improved Scoring Methodology
+- Enhanced pattern recognition
+- Special piece handling
+- Improved Scoring Methodology
 
 [View Project on GitHub](https://github.com/vineeth14/BlockBlastSolver)
 
