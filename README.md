@@ -1,6 +1,6 @@
 # Block Blast Solver
 
-Welcome to the Block Blast Solver project! This project started with a simple addiction to the game [Block Blast](https://apps.apple.com/us/app/block-blast/id1617391485). My goal was to create a solver that could analyze a screenshot of the game and suggest the best possible moves.
+Welcome to the Block Blast Solver project! This project started with my simple obsession with the game [Block Blast](https://apps.apple.com/us/app/block-blast/id1617391485). My goal was to create a solver that could analyze a screenshot of the game and suggest the best possible moves.
 
 ## Features
 
@@ -23,18 +23,22 @@ To get started with the Block Blast Solver, ensure you have Python and Angular s
       git clone https://github.com/vineeth14/BlockBlastSolver.git
       cd BlockBlastSolver
    ```
+2. **Install Python dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-2. **Start the solver**:
+3. **Start the solver**:
    ```bash
    fastapi dev main.py
    ```
 
-3. **Start the frontend**:
+4. **Start the frontend**:
    ```bash
    ng serve -o
    ```
 
-4. **View the solver**:
+5. **View the solver**:
    Open your browser and navigate to `http://localhost:4200` to see the solver in action.
 
 ## Usage
@@ -45,7 +49,7 @@ To get started with the Block Blast Solver, ensure you have Python and Angular s
 
 ## Blog Post
 
-For more insights into the development process, check out my [Solving Block Blast](https://vineeth14.github.io/BlockBlastSolver/docs/index.html) blog post.
+For more insights into the development process, check out my [Solving Block Blast](https://vineeth14.github.io/BlockBlastSolver) blog post.
 
 ## Results
 

@@ -26,7 +26,7 @@ def process_image(image):
     board = image_to_grid(image)
     grid = read_shapes_to_grid(image)
     shapes = create_shapes(grid)
-    turn =solve_board(board,shapes)
+    turn = solve_board(board,shapes)
     completion_counter,stepBoards = generate_step_boards(board, shapes, turn)
     # Store the result and update status.
 
