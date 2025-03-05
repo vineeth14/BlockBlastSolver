@@ -3,6 +3,9 @@ layout: default
 title: Block Blast Solver 
 ---
 
+<!-- Favicon -->
+<link rel="icon" href="{{ '/pictures/block_blast_icon.png' | relative_url }}" type="image/png">
+
 <!-- Include the custom CSS file if not already loaded by your layout -->
 <link rel="stylesheet" href="{{ '/assets/css/custom.css' | relative_url }}">
 
@@ -38,10 +41,9 @@ title: Block Blast Solver
 This project started with a simple obsession—[Block Blast](https://apps.apple.com/us/app/block-blast/id1617391485). The satisfaction of beating my friends' high scores while we were in a friendly competition to see who could get the highest score got me thinking about whether I could build a solver that could give me the best possible moves.
 
 <blockquote class="highlight">
-Block Blast is a Tetris inspired puzzle game where you drag and drop the pieces onto a 8x8 board and can clear both rows (like in Tetris) and columns; the pieces don't fall, you are presented with three at a time and drag them onto the board. You lose in a fashion similar to Tetris -- when there is no longer room to place a piece.
+Block Blast is a Tetris inspired puzzle game where you drag and drop the pieces onto an 8x8 board and can clear both rows (like in Tetris) and columns; the pieces don't fall, you are presented with three at a time and drag them onto the board. You lose in a fashion similar to Tetris -- when there is no longer room to place a piece.
 The game's simplicity is its charm, but don't be fooled—mastering Block Blast takes skill, strategy, and a sharp mind.
 </blockquote>
-
 
 I wanted a program that could analyze a screenshot when I was stuck and suggest the best moves. I decided to stay away from using AI as that seemed to defeat the challenge of the project.
 
@@ -64,6 +66,7 @@ The first challenge was to capture the game state accurately. This was challengi
 
 ### Approach 1: Simple Image Processing
 
+My initial approach followed classic computer vision techniques:
 1. Crop image into 2 parts: the game board and the game pieces
 2. Convert image to grayscale
 3. Crop image to isolate the region of interest
@@ -123,8 +126,8 @@ Attempted using HSV ranges to extract the shapes from the cropped images:
 - So hard coding the HSV color values wouldn't work consistently.
 
 ### Final Approach: Color Detection
+After trying several methods that didn't work consistently, I developed a color detection system that proved more reliable.
 
-After trying the above approaches, I decided to develop a color detection system to extract the shapes from the cropped images that would work consistently.
 This proved to be quite challenging because it was tricky to get consistent results. It was easy to find the shape, but accurately obtaining the correct number of blocks of the shape was extremely inconsistent due to factors like image quality and resolution. I applied a number of techniques to improve the accuracy of the detection.
 
 My color detection system consisted of 3 main steps:
@@ -136,7 +139,7 @@ My color detection system consisted of 3 main steps:
 
 #### Multi-Point Sampling Strategy
 1. Instead of relying on a single pixel, each grid cell is sampled at 11 points.
-2. This multi sample approach helps handling color variations and potential image noise.
+2. This multi-sample approach helps handle color variations and potential image noise.
 
 #### Color Matching Algorithm
 For each sampled point:
@@ -157,22 +160,38 @@ Now that we have detected the game board and the game pieces, we can start to th
 > Suggest the best possible moves given the current game state.
 
 ### Does the game make us lose on purpose?
-
-At the beginning of a game, the proposed pieces are strangely exactly what is needed to complete a row or column, which suggests the game is aware of the pieces we need. So, the game is clearly aware of the pieces we need, and at the start of the game at least, it helps us. This was an interesting observation I noticed.
+While developing the solver, I stumbled upon an interesting pattern. In the early game, the pieces you receive are suspiciously perfect for creating complete rows or columns, which suggests the game is aware of the pieces we need. At the start of the game at least, it helps us.
 
 
 ### Solution Evolution
 
 The solver uses:
 
-**Board Representation**
-  - 2D array structure
-  - Optimized pattern matching
+  - 2D array structure to represent the game state for fast operations
+  - Optimized pattern matching for move evaluation
 
 The final strategy I developed is a combination of brute force and a scoring system that would reward moves based on piece position. 
 The best position for each piece that will yield the highest score, we go through all possible positions for all pieces in all possible orders. Piece 1, then 2, then 3, then 1, then 3, then 2, etc. This is therefore a brute-force method, which takes a lot of time, especially when there are few pieces already placed on the board.
 The game rewards a player for completing rows and columns, so we want to maximize the number of rows and columns completed so I added an extra bonus to the score to emphasize this in the algorithm.
 I also penalize the creation of isolated blocks, meaning that if a move results in a single block surrounded by empty spaces at the end of a turn, it is penalized.
+
+
+So my solution has 3 key components:
+
+1. **Exhaustive Search**: Examines all valid permutations of piece placements
+   - Tests every possible order of the three available pieces
+   - Considers all valid positions for each piece
+   - Computationally expensive but guarantees finding the optimal solution
+
+2. **Strategic Scoring**: Evaluates board states using weighted factors
+   - Primary reward: Completed rows/columns (+50 points)
+   - Secondary rewards: Adjacent pieces, border placements
+   - Penalties: Isolated blocks, trapped spaces
+   
+3. **Performance Optimizations**: 
+   - Early pruning of equivalent states in the early game
+   - Skip evaluation of clearly suboptimal positions
+
 
 ### Scoring Methodology
 
@@ -187,22 +206,26 @@ I also penalize the creation of isolated blocks, meaning that if a move results 
 
 The brute-force method can take a long time if the board is relatively empty.
 So, I added the below optimization:
-- If the game state is has a board with less than 15 squares filled, I skip boards(valid placements) with same score, as doing it earlier would take too much time and also has no real value when there are no pieces yet.
+- If the game state has a board with less than 15 squares filled, I skip boards (valid placements) with the same score, as doing it earlier would take too much time and also has no real value when there are no pieces yet.
 
 **Over Optimization**:
 Something I ran into when trying to optimize the scoring methodology was increasing the score for partially completed rows/columns. This led to over-rewarding boards that have many filled cells even when they are not close to becoming complete. This can mislead the solver into choosing moves that rack up a lot of temporary points without actually progressing toward clearing rows/columns.
 
 ### Final Thoughts
-I'm happy with the results, and I had a lot of fun building this. It was great to learn about image processing and game logic. 
 
+What started as a simple desire to beat my friend's high scores turned into a fun journey through image processing, game theory, and optimization. The project taught me several valuable lessons about the nature of problem-solving in software engineering.
 
+First, the obvious solution isn't always the best one. My initial attempts with basic image processing seemed logical but failed spectacularly in practice. The path to a robust solution required stepping back, understanding the core challenges, and being willing to throw away code that I had invested time in.
+
+The final solution, while not perfect, consistently suggests the best possible moves for the current game state. Building it helped me develop a deeper appreciation for the subtle complexities that lie beneath seemingly simple games.
 
 ![Final Results!](pictures/final_results.gif)
 
 ### Future Improvements
 - Enhanced pattern recognition
 - Special piece handling
+- Caching of Board States
 - Improved Scoring Methodology
 
-[View Project on GitHub](https://github.com/vineeth14/BlockBlastSolver)
+
 
