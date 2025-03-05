@@ -4,7 +4,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.8.0 -->
 <title>Block Blast Solver | Developing an automated solver for block-matching puzzle games</title>
-<meta name="generator" content="Jekyll v4.4.1" />
+<meta name="generator" content="Jekyll v3.10.0" />
 <meta property="og:title" content="Block Blast Solver" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="Developing an automated solver for block-matching puzzle games" />
@@ -213,8 +213,33 @@ The game's simplicity is its charm, but don't be fooled—mastering Block Blast 
 </ol>
 
 <p>After the grid is scanned, the results are represented as a 2D array of 0s and 1s where 1s represent blocks and 0s represent background.</p>
-
-<hr />
+<div style="display: flex; justify-content: center; align-items: flex-start; gap: 20px; margin: 20px 0;">
+  <div style="text-align: center; flex-shrink: 0;">
+    <pre style="background-color: #fff; padding: 15px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-family: monospace; margin: 0; font-size: 14px;">[[1 1 1 0 0 0 0 1]
+[0 0 0 0 0 0 0 1]
+[0 0 0 0 0 0 0 1]
+[0 0 0 0 0 0 0 0]
+[0 0 0 0 0 0 0 0]
+[0 0 0 0 0 0 0 0]
+[0 1 1 0 0 0 0 0]
+[0 1 1 0 0 0 0 0]]</pre>
+    <p style="margin-top: 8px; margin-bottom: 0;"><strong>Board State</strong></p>
+  </div>
+  
+  <div style="text-align: center; flex-shrink: 0;">
+    <pre style="background-color: #fff; padding: 15px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-family: monospace; margin: 0; font-size: 14px;">[[0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+[0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+[0. 0. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+[0. 0. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 1. 1. 1. 0. 0.]
+[0. 0. 1. 0. 0. 0. 0. 1. 1. 1. 1. 0. 0. 1. 0. 0. 0. 0.]
+[0. 0. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 1. 0. 0. 0. 0.]
+[0. 0. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+[0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+[0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+[0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]]</pre>
+    <p style="margin-top: 8px; margin-bottom: 0;"><strong>Pieces Detected</strong></p>
+  </div>
+</div>
 
 <h2 id="approach-to-game-logic">Approach to Game Logic</h2>
 
@@ -311,13 +336,13 @@ Something I ran into when trying to optimize the scoring methodology was increas
 
 <h3 id="final-thoughts">Final Thoughts</h3>
 
-<p>What started as a simple desire to beat my friend’s high scores turned into a fun journey through image processing, game theory, and optimization. The project taught me several valuable lessons about the nature of problem-solving in software engineering.</p>
+<p>What started as a simple desire to beat my friend’s high scores turned into a fun journey through image processing, game theory, and optimization. I learnt a few lessons while developing this.</p>
 
 <p>First, the obvious solution isn’t always the best one. My initial attempts with basic image processing seemed logical but failed spectacularly in practice. The path to a robust solution required stepping back, understanding the core challenges, and being willing to throw away code that I had invested time in.</p>
 
-<p>The final solution, while not perfect, consistently suggests the best possible moves for the current game state. Building it helped me develop a deeper appreciation for the subtle complexities that lie beneath seemingly simple games.</p>
+<p>The final solution, while not perfect, consistently suggests the best possible moves for the current game state. Building it helped me gave me an appreciation for the subtle complexities that lie beneath seemingly simple games.</p>
 
-<p><img src="pictures/final_results.gif" alt="Final Results!" /></p>
+<p><img src="/BlockBlastSolver/pictures/final_results.gif" alt="Final Results!" /></p>
 
 <h3 id="future-improvements">Future Improvements</h3>
 <ul>

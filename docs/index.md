@@ -149,8 +149,33 @@ For each sampled point:
 4. Consider a cell to contain a block if more than 40% of samples are non-background
 
 After the grid is scanned, the results are represented as a 2D array of 0s and 1s where 1s represent blocks and 0s represent background.
-
----
+<div style='display: flex; justify-content: center; align-items: flex-start; gap: 20px; margin: 20px 0;'>
+  <div style='text-align: center; flex-shrink: 0;'>
+    <pre style='background-color: #fff; padding: 15px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-family: monospace; margin: 0; font-size: 14px;'>[[1 1 1 0 0 0 0 1]
+[0 0 0 0 0 0 0 1]
+[0 0 0 0 0 0 0 1]
+[0 0 0 0 0 0 0 0]
+[0 0 0 0 0 0 0 0]
+[0 0 0 0 0 0 0 0]
+[0 1 1 0 0 0 0 0]
+[0 1 1 0 0 0 0 0]]</pre>
+    <p style='margin-top: 8px; margin-bottom: 0;'><strong>Board State</strong></p>
+  </div>
+  
+  <div style='text-align: center; flex-shrink: 0;'>
+    <pre style='background-color: #fff; padding: 15px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-family: monospace; margin: 0; font-size: 14px;'>[[0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+[0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+[0. 0. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+[0. 0. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 1. 1. 1. 0. 0.]
+[0. 0. 1. 0. 0. 0. 0. 1. 1. 1. 1. 0. 0. 1. 0. 0. 0. 0.]
+[0. 0. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 1. 0. 0. 0. 0.]
+[0. 0. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+[0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+[0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+[0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]]</pre>
+    <p style='margin-top: 8px; margin-bottom: 0;'><strong>Pieces Detected</strong></p>
+  </div>
+</div>
 
 ## Approach to Game Logic
 
@@ -213,11 +238,11 @@ Something I ran into when trying to optimize the scoring methodology was increas
 
 ### Final Thoughts
 
-What started as a simple desire to beat my friend's high scores turned into a fun journey through image processing, game theory, and optimization. The project taught me several valuable lessons about the nature of problem-solving in software engineering.
+What started as a simple desire to beat my friend's high scores turned into a fun journey through image processing, game theory, and optimization. I learnt a few lessons while developing this.
 
 First, the obvious solution isn't always the best one. My initial attempts with basic image processing seemed logical but failed spectacularly in practice. The path to a robust solution required stepping back, understanding the core challenges, and being willing to throw away code that I had invested time in.
 
-The final solution, while not perfect, consistently suggests the best possible moves for the current game state. Building it helped me develop a deeper appreciation for the subtle complexities that lie beneath seemingly simple games.
+The final solution, while not perfect, consistently suggests the best possible moves for the current game state. Building it helped me gave me an appreciation for the subtle complexities that lie beneath seemingly simple games.
 
 ![Final Results!](pictures/final_results.gif)
 
