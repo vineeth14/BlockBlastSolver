@@ -14,35 +14,33 @@ origins = [
     "http://localhost:8000",
 ]
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins
-)
+app.add_middleware(CORSMiddleware, allow_origins=origins)
 
-processing_status ={}
+processing_status = {}
+
+
 def process_image(image):
 
     image = Image.open(io.BytesIO(image))
     board = image_to_grid(image)
     grid = read_shapes_to_grid(image)
     shapes = create_shapes(grid)
-    turn = solve_board(board,shapes)
-    completion_counter,stepBoards = generate_step_boards(board, shapes, turn)
+    turn = solve_board(board, shapes)
+    completion_counter, stepBoards = generate_step_boards(board, shapes, turn)
     # Store the result and update status.
 
-    return grid,board,stepBoards,completion_counter
+    return grid, board, stepBoards, completion_counter
 
 
 @app.post("/upload/")
 async def create_upload_file(file: UploadFile, background_tasks: BackgroundTasks):
     image = await file.read()
-    grid, board,stepBoards,completion_counter = process_image(image)
+    grid, board, stepBoards, completion_counter = process_image(image)
     stepBoards_serialized = [step.tolist() for step in stepBoards]
     response_object = {
-        'board': board.tolist(),
-        'stepBoards': stepBoards_serialized,
-        'completion_counter': completion_counter,
-        'shape_grid': grid.tolist()
+        "board": board.tolist(),
+        "stepBoards": stepBoards_serialized,
+        "completion_counter": completion_counter,
+        "shape_grid": grid.tolist(),
     }
     return response_object
-

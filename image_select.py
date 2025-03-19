@@ -1,20 +1,20 @@
-  #!/usr/bin/env python3
+#!/usr/bin/env python3
 
 from PIL import Image, ImageEnhance, ImageFilter
-import numpy as np 
+import numpy as np
 import cv2
 import matplotlib.pyplot as plt
 import io
 
 
-def image_to_grid(image, grid_size=(8,8)):
+def image_to_grid(image, grid_size=(8, 8)):
 
-    grayscaleImage = image.convert('L')
+    grayscaleImage = image.convert("L")
     cropGrid = (50, 600, 1120, 1650)
     gridImage = grayscaleImage.crop(cropGrid)
-   
+
     # Step 3: Apply thresholding to convert the image to binary
-    threshold = 85 
+    threshold = 85
     binaryImage = gridImage.point(lambda p: 255 if p > threshold else 0)
 
     # Step 4: Resize the image to the grid size
@@ -28,15 +28,18 @@ def image_to_grid(image, grid_size=(8,8)):
 
     return board
 
+
 # The function returns True if the pixel color is close to the background color, and False if it's different.
+
 
 def check_color(measured, reference, allowed_deviation):
     flag = True
-    for i in range(3): 
+    for i in range(3):
         # Check if the difference between measured and background color is greater than the allowed deviation
         if abs(measured[i] - reference[i]) > allowed_deviation * 255:
             flag = False
     return flag
+
 
 def read_shapes_to_grid(image):
 
@@ -52,7 +55,6 @@ def read_shapes_to_grid(image):
     px = gridImage.load()
     imgWidth, imgHeight = gridImage.size
 
-
     xOffset = 10
     blockSize = 58  # Make sure this matches your grid size
 
@@ -62,19 +64,19 @@ def read_shapes_to_grid(image):
     # Defines multiple points to sample within each grid cell
 
     sampleOffsets = [
-        (0, 0),      # Center
-        (5, 0),      # Near right
-        (-5, 0),     # Near left
-        (0, 5),      # Near down
-        (0, -5),     # Near up
-        (15, 0),     # Far right
-        (-15, 0),    # Far left
-        (0, 15),     # Far down
-        (0, -15),    # Far up
-        (0, 20),     # Extra far down
-        (0, -20),    # Extra far up     
+        (0, 0),  # Center
+        (5, 0),  # Near right
+        (-5, 0),  # Near left
+        (0, 5),  # Near down
+        (0, -5),  # Near up
+        (15, 0),  # Far right
+        (-15, 0),  # Far left
+        (0, 15),  # Far down
+        (0, -15),  # Far up
+        (0, 20),  # Extra far down
+        (0, -20),  # Extra far up
     ]
-      
+
     # Initialize the grid with zeros (with a small extra buffer)
     grid = np.zeros((imgHeight // blockSize + 2, imgWidth // blockSize + 2))
     x = -1
@@ -84,22 +86,24 @@ def read_shapes_to_grid(image):
         ShapeDetected = False
         while (y + 1) * blockSize < imgHeight - 1:
             y += 1
-            
+
             # Sample multiple pixels in each block
             baseX = x * blockSize + xOffset
             baseY = y * blockSize
-            
+
             # Count both block and background pixels
             bgPixels = 0
             blockPixels = 0
             totalSamples = len(sampleOffsets)
-            
+
             for offsetX, offsetY in sampleOffsets:
                 try:
                     sampleX = baseX + offsetX
                     sampleY = baseY + offsetY
                     if 0 <= sampleX < imgWidth and 0 <= sampleY < imgHeight:
-                        colorMatch = check_color(px[sampleX, sampleY], refBackground, 0.05)
+                        colorMatch = check_color(
+                            px[sampleX, sampleY], refBackground, 0.05
+                        )
                         if colorMatch:
                             bgPixels += 1
                         else:
@@ -107,11 +111,13 @@ def read_shapes_to_grid(image):
                 except IndexError:
                     totalSamples -= 1  # Reduce total if pixel is out of bounds
                     continue
-            
+
             # Use ratio of block pixels to total valid samples
             blockRatio = blockPixels / totalSamples
-            isBackground = blockRatio < 0.4  # If less than 40% of pixels are block pixels
-            
+            isBackground = (
+                blockRatio < 0.4
+            )  # If less than 40% of pixels are block pixels
+
             if not ShapeDetected and not isBackground:
                 ShapeDetected = True
                 grid[y, x] = 1
@@ -121,6 +127,3 @@ def read_shapes_to_grid(image):
                 break
 
     return grid
-
-
-

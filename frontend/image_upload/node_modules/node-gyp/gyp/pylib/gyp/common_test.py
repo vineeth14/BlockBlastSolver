@@ -12,6 +12,7 @@ import sys
 import os
 from unittest.mock import patch, MagicMock
 
+
 class TestTopologicallySorted(unittest.TestCase):
     def test_Valid(self):
         """Test that sorting works on a valid graph with one possible order."""
@@ -25,8 +26,12 @@ class TestTopologicallySorted(unittest.TestCase):
         def GetEdge(node):
             return tuple(graph[node])
 
-        assert gyp.common.TopologicallySorted(
-            graph.keys(), GetEdge) == ["a", "c", "d", "b"]
+        assert gyp.common.TopologicallySorted(graph.keys(), GetEdge) == [
+            "a",
+            "c",
+            "d",
+            "b",
+        ]
 
     def test_Cycle(self):
         """Test that an exception is thrown on a cyclic graph."""
@@ -100,72 +105,68 @@ class TestGetFlavor(unittest.TestCase):
                     flavor = gyp.common.GetFlavor({})
                 if env.get("CC_target"):
                     mock_run.assert_called_with(
-                        [
-                            *expected_cmd,
-                            "-dM", "-E", "-x", "c", expected_input
-                        ],
+                        [*expected_cmd, "-dM", "-E", "-x", "c", expected_input],
                         shell=sys.platform == "win32",
-                        capture_output=True, check=True)
+                        capture_output=True,
+                        check=True,
+                    )
                 return [defines, flavor]
 
         [defines1, _] = mock_run({}, "", [])
         assert {} == defines1
 
         [defines2, flavor2] = mock_run(
-            { "CC_target": "/opt/wasi-sdk/bin/clang" },
+            {"CC_target": "/opt/wasi-sdk/bin/clang"},
             "#define __wasm__ 1\n#define __wasi__ 1\n",
-            ["/opt/wasi-sdk/bin/clang"]
+            ["/opt/wasi-sdk/bin/clang"],
         )
-        assert { "__wasm__": "1", "__wasi__": "1" } == defines2
+        assert {"__wasm__": "1", "__wasi__": "1"} == defines2
         assert flavor2 == "wasi"
 
         [defines3, flavor3] = mock_run(
-            { "CC_target": "/opt/wasi-sdk/bin/clang --target=wasm32" },
+            {"CC_target": "/opt/wasi-sdk/bin/clang --target=wasm32"},
             "#define __wasm__ 1\n",
-            ["/opt/wasi-sdk/bin/clang", "--target=wasm32"]
+            ["/opt/wasi-sdk/bin/clang", "--target=wasm32"],
         )
-        assert { "__wasm__": "1" } == defines3
+        assert {"__wasm__": "1"} == defines3
         assert flavor3 == "wasm"
 
         [defines4, flavor4] = mock_run(
-            { "CC_target": "/emsdk/upstream/emscripten/emcc" },
+            {"CC_target": "/emsdk/upstream/emscripten/emcc"},
             "#define __EMSCRIPTEN__ 1\n",
-            ["/emsdk/upstream/emscripten/emcc"]
+            ["/emsdk/upstream/emscripten/emcc"],
         )
-        assert { "__EMSCRIPTEN__": "1" } == defines4
+        assert {"__EMSCRIPTEN__": "1"} == defines4
         assert flavor4 == "emscripten"
 
         # Test path which include white space
         [defines5, flavor5] = mock_run(
             {
-                "CC_target": "\"/Users/Toyo Li/wasi-sdk/bin/clang\" -O3",
-                "CFLAGS": "--target=wasm32-wasi-threads -pthread"
+                "CC_target": '"/Users/Toyo Li/wasi-sdk/bin/clang" -O3',
+                "CFLAGS": "--target=wasm32-wasi-threads -pthread",
             },
             "#define __wasm__ 1\n#define __wasi__ 1\n#define _REENTRANT 1\n",
             [
                 "/Users/Toyo Li/wasi-sdk/bin/clang",
                 "-O3",
                 "--target=wasm32-wasi-threads",
-                "-pthread"
-            ]
+                "-pthread",
+            ],
         )
-        assert {
-            "__wasm__": "1",
-            "__wasi__": "1",
-            "_REENTRANT": "1"
-        } == defines5
+        assert {"__wasm__": "1", "__wasi__": "1", "_REENTRANT": "1"} == defines5
         assert flavor5 == "wasi"
 
         original_sep = os.sep
         os.sep = "\\"
         [defines6, flavor6] = mock_run(
-            { "CC_target": "\"C:\\Program Files\\wasi-sdk\\clang.exe\"" },
+            {"CC_target": '"C:\\Program Files\\wasi-sdk\\clang.exe"'},
             "#define __wasm__ 1\n#define __wasi__ 1\n",
-            ["C:/Program Files/wasi-sdk/clang.exe"]
+            ["C:/Program Files/wasi-sdk/clang.exe"],
         )
         os.sep = original_sep
-        assert { "__wasm__": "1", "__wasi__": "1" } == defines6
+        assert {"__wasm__": "1", "__wasi__": "1"} == defines6
         assert flavor6 == "wasi"
+
 
 if __name__ == "__main__":
     unittest.main()
